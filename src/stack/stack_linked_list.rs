@@ -31,9 +31,10 @@ impl<T> StackLinkedList<T> {
 }
 
 impl<T> Stack<T> for StackLinkedList<T> {
-    fn push(&mut self, data: T) {
+    fn push(&mut self, data: T) -> Result<(), String> {
         self.head = Some(Box::new(Node::new(data, self.head.take())));
         self.size += 1;
+        Ok(())
     }
 
     fn pop(&mut self) -> Option<T> {

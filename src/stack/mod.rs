@@ -1,9 +1,11 @@
+pub mod stack_fixed_arr;
 pub mod stack_linked_list;
 
+pub use stack_fixed_arr::StackFixedArray;
 pub use stack_linked_list::StackLinkedList;
 
 trait Stack<T> {
-    fn push(&mut self, data: T);
+    fn push(&mut self, data: T) -> Result<(), String>;
 
     fn pop(&mut self) -> Option<T>;
 
@@ -24,10 +26,10 @@ mod test {
         assert_eq!(stack.size(), 0);
         assert_eq!(stack.is_empty(), true);
 
-        stack.push(1);
-        stack.push(2);
-        stack.push(3);
-        stack.push(4);
+        stack.push(1).unwrap();
+        stack.push(2).unwrap();
+        stack.push(3).unwrap();
+        stack.push(4).unwrap();
 
         assert_eq!(stack.size(), 4);
         assert_eq!(stack.is_empty(), false);
@@ -41,8 +43,8 @@ mod test {
         assert_eq!(stack.is_empty(), false);
         assert_eq!(stack.peek(), Some(&1));
 
-        stack.push(5);
-        stack.push(2);
+        stack.push(5).unwrap();
+        stack.push(2).unwrap();
 
         assert_eq!(stack.size(), 3);
         assert_eq!(stack.pop(), Some(2));
@@ -54,8 +56,23 @@ mod test {
         assert_eq!(stack.size(), 0);
         assert_eq!(stack.is_empty(), true);
     }
+
     #[test]
     fn test_stack_linked_list() {
         test_stack(&mut StackLinkedList::new());
+    }
+
+    #[test]
+    fn test_stack_fixed_arr() {
+        test_stack(&mut StackFixedArray::<i32, 50>::new());
+
+        // test size limit
+        let mut stack = StackFixedArray::<i32, 5>::new();
+        assert!(stack.push(1).is_ok());
+        assert!(stack.push(2).is_ok());
+        assert!(stack.push(3).is_ok());
+        assert!(stack.push(4).is_ok());
+        assert!(stack.push(5).is_ok());
+        assert!(stack.push(6).is_err());
     }
 }
