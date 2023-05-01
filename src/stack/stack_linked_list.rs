@@ -38,9 +38,9 @@ impl<T> Stack<T> for StackLinkedList<T> {
     }
 
     fn pop(&mut self) -> Option<T> {
-        self.size -= !self.head.is_none() as usize;
         self.head.take().map(|node| {
             self.head = node.next;
+            self.size -= 1;
             node.data
         })
     }
