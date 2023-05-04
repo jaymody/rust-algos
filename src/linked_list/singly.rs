@@ -12,10 +12,7 @@ struct Node<T> {
 
 impl<T> Node<T> {
     pub fn new(item: T, next: Link<T>) -> Self {
-        Node {
-            item: item,
-            next: next,
-        }
+        Node { item, next }
     }
 }
 
