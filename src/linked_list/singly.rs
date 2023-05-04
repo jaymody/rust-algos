@@ -1,4 +1,4 @@
-use std::ops::{Deref, DerefMut};
+use std::ops::DerefMut;
 
 use super::LinkedList;
 
@@ -85,15 +85,14 @@ impl<T> LinkedList<T> for SinglyLinkedList<T> {
     }
 
     fn peek_front(&self) -> Option<&T> {
-        Some(&self.head.as_ref()?.deref().item)
+        self.into_iter().nth(0)
     }
 
     fn peek_back(&self) -> Option<&T> {
-        let mut prev = self.head.as_ref()?.deref();
-        while let Some(node) = prev.next.as_ref() {
-            prev = node.as_ref();
+        if self.is_empty() {
+            return None;
         }
-        Some(&prev.item)
+        self.into_iter().nth(self.size - 1)
     }
 
     fn is_empty(&self) -> bool {
