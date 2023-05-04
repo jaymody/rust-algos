@@ -1,6 +1,6 @@
 pub mod singly;
 
-trait LinkedList<T> {
+trait LinkedList<T>: IntoIterator<Item = T> {
     fn push_front(&mut self, item: T) -> Result<(), String>;
 
     fn push_back(&mut self, item: T) -> Result<(), String>;

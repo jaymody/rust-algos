@@ -2,6 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use super::LinkedList;
 
+/* node and link structs */
 type Link<T> = Option<Box<Node<T>>>;
 
 struct Node<T> {
@@ -18,6 +19,7 @@ impl<T> Node<T> {
     }
 }
 
+/* singly linked list struct */
 pub struct SinglyLinkedList<T> {
     head: Link<T>,
     size: usize,
@@ -108,6 +110,29 @@ impl<T> LinkedList<T> for SinglyLinkedList<T> {
     }
 }
 
+/* impl IntoIterator<Item = T> */
+pub struct IntoIter<T> {
+    list: SinglyLinkedList<T>,
+}
+
+impl<T> Iterator for IntoIter<T> {
+    type Item = T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        self.list.pop_front()
+    }
+}
+
+impl<T> IntoIterator for SinglyLinkedList<T> {
+    type Item = T;
+    type IntoIter = IntoIter<Self::Item>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIter { list: self }
+    }
+}
+
+/* tests */
 #[cfg(test)]
 mod test {
     use super::*;
@@ -164,7 +189,7 @@ mod test {
         assert_eq!(list.pop_back(), Some(1));
         assert_eq!(list.pop_back(), None);
 
-        // peek front and back
+        // peek front and back and then into iter
         assert_eq!(list.peek_front(), None);
         assert_eq!(list.peek_back(), None);
 
@@ -177,5 +202,9 @@ mod test {
 
         assert_eq!(list.peek_front(), Some(&1));
         assert_eq!(list.peek_back(), Some(&3));
+
+        for (i, x) in list.into_iter().enumerate() {
+            assert_eq!(x, i + 1)
+        }
     }
 }
