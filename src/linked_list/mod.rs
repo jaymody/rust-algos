@@ -1,6 +1,10 @@
 pub mod singly;
 
-trait LinkedList<T>: IntoIterator<Item = T> {
+trait LinkedList<T>
+where
+    Self: IntoIterator<Item = T>,
+    for<'a> &'a Self: IntoIterator<Item = &'a T>,
+{
     fn push_front(&mut self, item: T) -> Result<(), String>;
 
     fn push_back(&mut self, item: T) -> Result<(), String>;

@@ -132,6 +132,32 @@ impl<T> IntoIterator for SinglyLinkedList<T> {
     }
 }
 
+/* impl IntoIterator<Item = &T> */
+pub struct Iter<'a, T> {
+    current: Option<&'a Node<T>>,
+}
+
+impl<'a, T> Iterator for Iter<'a, T> {
+    type Item = &'a T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let current = self.current?;
+        self.current = current.next.as_deref();
+        Some(&current.item)
+    }
+}
+
+impl<'a, T> IntoIterator for &'a SinglyLinkedList<T> {
+    type Item = &'a T;
+    type IntoIter = Iter<'a, T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        Iter {
+            current: self.head.as_deref(),
+        }
+    }
+}
+
 /* tests */
 #[cfg(test)]
 mod test {
@@ -189,7 +215,7 @@ mod test {
         assert_eq!(list.pop_back(), Some(1));
         assert_eq!(list.pop_back(), None);
 
-        // peek front and back and then into iter
+        // peek front and back
         assert_eq!(list.peek_front(), None);
         assert_eq!(list.peek_back(), None);
 
@@ -202,6 +228,11 @@ mod test {
 
         assert_eq!(list.peek_front(), Some(&1));
         assert_eq!(list.peek_back(), Some(&3));
+
+        // test non-consuming iter then consuming iter
+        for (i, x) in (&list).into_iter().enumerate() {
+            assert_eq!(x, &(i + 1))
+        }
 
         for (i, x) in list.into_iter().enumerate() {
             assert_eq!(x, i + 1)
