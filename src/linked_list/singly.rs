@@ -158,6 +158,36 @@ impl<'a, T> IntoIterator for &'a SinglyLinkedList<T> {
     }
 }
 
+/* impl IntoIterator<Item = &mut T> */
+pub struct IterMut<'a, T> {
+    current: Option<&'a mut Node<T>>,
+}
+
+impl<'a, T> Iterator for IterMut<'a, T> {
+    type Item = &'a mut T;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        match self.current.take() {
+            None => None,
+            Some(node) => {
+                self.current = node.next.as_deref_mut();
+                Some(&mut node.item)
+            }
+        }
+    }
+}
+
+impl<'a, T> IntoIterator for &'a mut SinglyLinkedList<T> {
+    type Item = &'a mut T;
+    type IntoIter = IterMut<'a, T>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        IterMut {
+            current: self.head.as_deref_mut(),
+        }
+    }
+}
+
 /* tests */
 #[cfg(test)]
 mod test {
@@ -229,13 +259,17 @@ mod test {
         assert_eq!(list.peek_front(), Some(&1));
         assert_eq!(list.peek_back(), Some(&3));
 
-        // test non-consuming iter then consuming iter
+        // test iters
+        for x in &mut list {
+            *x = *x + 10;
+        }
+
         for (i, x) in (&list).into_iter().enumerate() {
-            assert_eq!(x, &(i + 1))
+            assert_eq!(x, &(i + 11))
         }
 
         for (i, x) in list.into_iter().enumerate() {
-            assert_eq!(x, i + 1)
+            assert_eq!(x, i + 11)
         }
     }
 }

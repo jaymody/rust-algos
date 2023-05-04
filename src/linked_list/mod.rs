@@ -4,6 +4,7 @@ trait LinkedList<T>
 where
     Self: IntoIterator<Item = T>,
     for<'a> &'a Self: IntoIterator<Item = &'a T>,
+    for<'a> &'a mut Self: IntoIterator<Item = &'a mut T>,
 {
     fn push_front(&mut self, item: T) -> Result<(), String>;
 
