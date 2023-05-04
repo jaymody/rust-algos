@@ -1,4 +1,7 @@
 pub mod singly;
+mod test;
+
+pub use singly::SinglyLinkedList;
 
 trait LinkedList<T>
 where
