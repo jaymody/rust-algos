@@ -17,11 +17,11 @@ impl<T, const MAX_SIZE: usize> StackFixedArray<T, MAX_SIZE> {
 }
 
 impl<T, const MAX_SIZE: usize> Stack<T> for StackFixedArray<T, MAX_SIZE> {
-    fn push(&mut self, data: T) -> Result<(), String> {
+    fn push(&mut self, item: T) -> Result<(), String> {
         if self.size >= MAX_SIZE {
             return Err("exceeding max size of stack".to_string());
         }
-        self.arr[self.size] = Some(data);
+        self.arr[self.size] = Some(item);
         self.size += 1;
         Ok(())
     }

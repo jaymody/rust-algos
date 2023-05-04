@@ -3,7 +3,7 @@ mod test;
 
 pub use singly::SinglyLinkedList;
 
-trait LinkedList<T>
+pub trait LinkedList<T>
 where
     Self: IntoIterator<Item = T>,
     for<'a> &'a Self: IntoIterator<Item = &'a T>,

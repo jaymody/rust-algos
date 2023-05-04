@@ -5,7 +5,7 @@ pub use stack_fixed_arr::StackFixedArray;
 pub use stack_linked_list::StackLinkedList;
 
 trait Stack<T> {
-    fn push(&mut self, data: T) -> Result<(), String>;
+    fn push(&mut self, item: T) -> Result<(), String>;
 
     fn pop(&mut self) -> Option<T>;
 
