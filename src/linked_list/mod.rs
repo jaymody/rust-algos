@@ -9,9 +9,9 @@ where
     for<'a> &'a Self: IntoIterator<Item = &'a T>,
     for<'a> &'a mut Self: IntoIterator<Item = &'a mut T>,
 {
-    fn push_front(&mut self, item: T) -> Result<(), String>;
+    fn push_front(&mut self, item: T);
 
-    fn push_back(&mut self, item: T) -> Result<(), String>;
+    fn push_back(&mut self, item: T);
 
     fn pop_front(&mut self) -> Option<T>;
 
@@ -25,7 +25,7 @@ where
 
     fn size(&self) -> usize;
 
-    // fn push_at(&mut self, index: usize, item: T) -> Result<(), String>;
+    // fn push_at(&mut self, index: usize, item: T);
 
     // fn pop_at();
 

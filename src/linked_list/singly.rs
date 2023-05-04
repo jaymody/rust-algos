@@ -35,13 +35,12 @@ impl<T> SinglyLinkedList<T> {
 }
 
 impl<T> LinkedList<T> for SinglyLinkedList<T> {
-    fn push_front(&mut self, item: T) -> Result<(), String> {
+    fn push_front(&mut self, item: T) {
         self.head = Some(Box::new(Node::new(item, self.head.take())));
         self.size += 1;
-        Ok(())
     }
 
-    fn push_back(&mut self, item: T) -> Result<(), String> {
+    fn push_back(&mut self, item: T) {
         let new_node = Some(Box::new(Node::new(item, None)));
 
         match self.head.as_mut() {
@@ -59,7 +58,6 @@ impl<T> LinkedList<T> for SinglyLinkedList<T> {
         }
 
         self.size += 1;
-        Ok(())
     }
 
     fn pop_front(&mut self) -> Option<T> {
