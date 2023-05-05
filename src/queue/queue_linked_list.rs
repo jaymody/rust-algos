@@ -1,4 +1,4 @@
-use std::{fmt::Debug, ops::DerefMut, ptr::null_mut};
+use std::{ops::DerefMut, ptr::null_mut};
 
 use super::Queue;
 
@@ -33,44 +33,34 @@ impl<T> QueueLinkedList<T> {
 }
 
 /* impl Queue trait */
-impl<T> Queue<T> for QueueLinkedList<T>
-where
-    T: Debug,
-{
+impl<T> Queue<T> for QueueLinkedList<T> {
     fn enqueue(&mut self, item: T) {
         unsafe {
-            let mut new_node = Box::new(Node::new(item, None));
+            let mut new_tail = Box::new(Node::new(item, None));
 
-            match self.head.take() {
-                None => {
-                    self.tail = &mut *new_node;
-                    self.head = Some(new_node);
-                    println!("hi: {:?}", (*self.tail).item);
-                }
-                head => {
-                    self.head = head;
-                    (*self.tail).next = Some(new_node);
-                    self.tail = (*self.tail).next.as_mut().unwrap().deref_mut();
-                }
-            };
+            if self.tail.is_null() {
+                self.tail = &mut *new_tail;
+                self.head = Some(new_tail);
+            } else {
+                (*self.tail).next = Some(new_tail);
+                self.tail = (*self.tail).next.as_mut().unwrap().deref_mut();
+            }
+
+            self.size += 1;
         }
-
-        self.size += 1;
     }
 
     fn dequeue(&mut self) -> Option<T> {
         let old_head = self.head.take()?;
         self.size -= 1;
-        match old_head.next {
-            None => {
-                self.tail = null_mut();
-                Some(old_head.item)
-            }
-            node => {
-                self.head = node;
-                Some(old_head.item)
-            }
+
+        if old_head.next.is_none() {
+            self.tail = null_mut()
+        } else {
+            self.head = old_head.next
         }
+
+        Some(old_head.item)
     }
 
     fn peek_front(&self) -> Option<&T> {
