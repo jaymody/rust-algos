@@ -178,17 +178,17 @@ mod tests {
         assert_eq!(list.peek_front(), Some(&1));
         assert_eq!(list.peek_back(), Some(&3));
 
-        // // test iters
-        // for x in &mut list {
-        //     *x = *x + 10;
-        // }
+        // test iters
+        for x in &mut list {
+            *x = *x + 10;
+        }
 
-        // for (i, x) in (&list).into_iter().enumerate() {
-        //     assert_eq!(x, &(i + 11))
-        // }
+        for (i, x) in (&list).into_iter().enumerate() {
+            assert_eq!(x, &(i + 11))
+        }
 
-        // for (i, x) in list.into_iter().enumerate() {
-        //     assert_eq!(x, i + 11)
-        // }
+        for (i, x) in list.into_iter().enumerate() {
+            assert_eq!(x, i + 11)
+        }
     }
 }

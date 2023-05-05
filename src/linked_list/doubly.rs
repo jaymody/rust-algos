@@ -1,4 +1,4 @@
-use std::ptr::{null, null_mut};
+use std::{marker::PhantomData, ptr::null_mut};
 
 use super::LinkedList;
 
@@ -140,14 +140,23 @@ impl<T> IntoIterator for DoublyLinkedList<T> {
 
 /* impl IntoIterator<Item = &T> */
 pub struct Iter<'a, T> {
-    current: Option<&'a Node<T>>,
+    current: Link<T>,
+    _marker: PhantomData<&'a T>,
 }
 
 impl<'a, T> Iterator for Iter<'a, T> {
     type Item = &'a T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        todo!()
+        unsafe {
+            if self.current.is_null() {
+                None
+            } else {
+                let old = self.current;
+                self.current = (*old).next;
+                Some(&(*old).item)
+            }
+        }
     }
 }
 
@@ -156,20 +165,32 @@ impl<'a, T> IntoIterator for &'a DoublyLinkedList<T> {
     type IntoIter = Iter<'a, T>;
 
     fn into_iter(self) -> Self::IntoIter {
-        todo!()
+        Iter {
+            current: self.head,
+            _marker: PhantomData,
+        }
     }
 }
 
 /* impl IntoIterator<Item = &mut T> */
 pub struct IterMut<'a, T> {
-    current: Option<&'a mut Node<T>>,
+    current: Link<T>,
+    _marker: PhantomData<&'a T>,
 }
 
 impl<'a, T> Iterator for IterMut<'a, T> {
     type Item = &'a mut T;
 
     fn next(&mut self) -> Option<Self::Item> {
-        todo!()
+        unsafe {
+            if self.current.is_null() {
+                None
+            } else {
+                let old = self.current;
+                self.current = (*old).next;
+                Some(&mut (*old).item)
+            }
+        }
     }
 }
 
@@ -178,6 +199,9 @@ impl<'a, T> IntoIterator for &'a mut DoublyLinkedList<T> {
     type IntoIter = IterMut<'a, T>;
 
     fn into_iter(self) -> Self::IntoIter {
-        todo!()
+        IterMut {
+            current: self.head,
+            _marker: PhantomData,
+        }
     }
 }
