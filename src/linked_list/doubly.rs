@@ -1,4 +1,4 @@
-use std::ptr::null_mut;
+use std::ptr::{null, null_mut};
 
 use super::LinkedList;
 
@@ -49,7 +49,16 @@ impl<T> LinkedList<T> for DoublyLinkedList<T> {
     }
 
     fn push_back(&mut self, item: T) {
-        todo!()
+        let mut new_tail = Node::new(item, null_mut(), null_mut());
+
+        if self.tail.is_null() {
+            self.head = &mut new_tail;
+        } else {
+            new_tail.next = self.tail;
+        }
+
+        self.tail = &mut new_tail;
+        self.size += 1;
     }
 
     fn pop_front(&mut self) -> Option<T> {
@@ -66,15 +75,36 @@ impl<T> LinkedList<T> for DoublyLinkedList<T> {
     }
 
     fn pop_back(&mut self) -> Option<T> {
-        todo!()
+        unsafe {
+            if self.tail.is_null() {
+                None
+            } else {
+                let old_tail = self.tail;
+                self.tail = (*old_tail).prev;
+                self.size -= 1;
+                Some(Box::from_raw(old_tail).item)
+            }
+        }
     }
 
     fn peek_front(&self) -> Option<&T> {
-        todo!()
+        unsafe {
+            if !self.head.is_null() {
+                Some(&(*self.head).item)
+            } else {
+                None
+            }
+        }
     }
 
     fn peek_back(&self) -> Option<&T> {
-        todo!()
+        unsafe {
+            if !self.tail.is_null() {
+                Some(&(*self.tail).item)
+            } else {
+                None
+            }
+        }
     }
 
     fn is_empty(&self) -> bool {
