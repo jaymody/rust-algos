@@ -6,13 +6,9 @@ pub use stack_linked_list::StackLinkedList;
 
 trait Stack<T> {
     fn push(&mut self, item: T) -> Result<(), String>;
-
     fn pop(&mut self) -> Option<T>;
-
     fn peek(&self) -> Option<&T>;
-
     fn is_empty(&self) -> bool;
-
     fn size(&self) -> usize;
 }
 
