@@ -1,10 +1,12 @@
 pub mod bubble;
 pub mod insert;
 pub mod selection;
+pub mod shell;
 
 pub use bubble::bubble_sort;
 pub use insert::insert_sort;
 pub use selection::selection_sort;
+pub use shell::shell_sort;
 
 #[cfg(test)]
 mod tests {
@@ -52,5 +54,10 @@ mod tests {
     #[test]
     fn test_selection_sort() {
         test_sort_fn(selection_sort);
+    }
+
+    #[test]
+    fn test_shell_sort() {
+        test_sort_fn(shell_sort);
     }
 }
