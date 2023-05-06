@@ -1,15 +1,19 @@
 pub mod bubble;
 pub mod insertion;
+pub mod quick;
 pub mod selection;
 pub mod shell;
 
 pub use bubble::bubble_sort;
 pub use insertion::insertion_sort;
+pub use quick::quick_sort;
 pub use selection::selection_sort;
 pub use shell::shell_sort;
 
 #[cfg(test)]
 mod tests {
+    use rand::Rng;
+
     use super::*;
 
     fn test_sort_fn<F>(sort_fn: F)
@@ -39,6 +43,13 @@ mod tests {
             &mut [1, 1, 5, 1, 6, 7, -3, 0, 0, 9],
             &[-3, 0, 0, 1, 1, 1, 5, 6, 7, 9],
         );
+
+        const SIZE: usize = 20;
+        let mut arr: [i32; SIZE] = std::array::from_fn(|_| rand::thread_rng().gen_range(-50..=50));
+        let mut ans: [i32; SIZE] = [0; SIZE];
+        ans.copy_from_slice(&arr);
+        ans.sort();
+        test_example(&mut arr, &ans)
     }
 
     #[test]
@@ -59,5 +70,10 @@ mod tests {
     #[test]
     fn test_shell_sort() {
         test_sort_fn(shell_sort);
+    }
+
+    #[test]
+    fn test_quick_sort() {
+        test_sort_fn(quick_sort);
     }
 }
