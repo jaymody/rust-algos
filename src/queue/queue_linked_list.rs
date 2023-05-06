@@ -34,7 +34,7 @@ impl<T> QueueLinkedList<T> {
 
 /* impl Queue trait */
 impl<T> Queue<T> for QueueLinkedList<T> {
-    fn enqueue(&mut self, item: T) {
+    fn push(&mut self, item: T) {
         unsafe {
             let mut new_tail = Box::new(Node::new(item, None));
 
@@ -50,7 +50,7 @@ impl<T> Queue<T> for QueueLinkedList<T> {
         }
     }
 
-    fn dequeue(&mut self) -> Option<T> {
+    fn pop(&mut self) -> Option<T> {
         let old_head = self.head.take()?;
         self.size -= 1;
 
