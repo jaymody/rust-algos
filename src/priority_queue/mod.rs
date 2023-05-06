@@ -1,6 +1,8 @@
+pub mod heap;
 pub mod ordered_arr;
 pub mod unordered_arr;
 
+pub use heap::PriorityQueueBinaryHeap;
 pub use ordered_arr::PriorityQueueOrderedArr;
 pub use unordered_arr::PriorityQueueUnorderedArr;
 
@@ -78,6 +80,20 @@ mod tests {
         test(&mut pq);
 
         let mut pq: PriorityQueueOrderedArr<i32, 5> = PriorityQueueOrderedArr::new();
+        assert!(pq.push(1).is_ok());
+        assert!(pq.push(2).is_ok());
+        assert!(pq.push(3).is_ok());
+        assert!(pq.push(4).is_ok());
+        assert!(pq.push(5).is_ok());
+        assert!(pq.push(6).is_err());
+    }
+
+    #[test]
+    fn test_binary_heap() {
+        let mut pq: PriorityQueueBinaryHeap<i32, 99> = PriorityQueueBinaryHeap::new();
+        test(&mut pq);
+
+        let mut pq: PriorityQueueBinaryHeap<i32, 5> = PriorityQueueBinaryHeap::new();
         assert!(pq.push(1).is_ok());
         assert!(pq.push(2).is_ok());
         assert!(pq.push(3).is_ok());
