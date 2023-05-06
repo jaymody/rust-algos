@@ -2,7 +2,7 @@
 The approach used here is to keep a fixed length arr with items that unordered
 and keep a value that tracks the current number of items.
 
-Pushing to the heap requires O(1) time. We just add the item to the end of the
+Pushing to the pq requires O(1) time. We just add the item to the end of the
 array.
 
 Peeking and popping require O(n) time. For peeking, we linearly search the array
@@ -11,18 +11,18 @@ we exchange it with the last entry and then remove the last entry (which since
 we swapped, is the smallest item).
 */
 
-use super::MinHeap;
+use super::PriorityQueue;
 
-pub struct MinHeapUnorderedArr<T: Ord, const CAPACITY: usize> {
+pub struct PriorityQueueUnorderedArr<T: Ord, const CAPACITY: usize> {
     arr: [Option<T>; CAPACITY],
     size: usize,
 }
 
-impl<T: Ord, const CAPACITY: usize> MinHeapUnorderedArr<T, CAPACITY> {
+impl<T: Ord, const CAPACITY: usize> PriorityQueueUnorderedArr<T, CAPACITY> {
     const INIT: Option<T> = None;
 
     pub fn new() -> Self {
-        MinHeapUnorderedArr {
+        PriorityQueueUnorderedArr {
             arr: [Self::INIT; CAPACITY],
             size: 0,
         }
@@ -42,10 +42,10 @@ impl<T: Ord, const CAPACITY: usize> MinHeapUnorderedArr<T, CAPACITY> {
     }
 }
 
-impl<T: Ord, const CAPACITY: usize> MinHeap<T> for MinHeapUnorderedArr<T, CAPACITY> {
+impl<T: Ord, const CAPACITY: usize> PriorityQueue<T> for PriorityQueueUnorderedArr<T, CAPACITY> {
     fn push(&mut self, item: T) -> Result<(), String> {
         if self.size >= CAPACITY {
-            return Err("min heap full".to_string());
+            return Err("min pq full".to_string());
         }
         self.arr[self.size] = Some(item);
         self.size += 1;
