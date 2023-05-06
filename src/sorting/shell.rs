@@ -1,6 +1,5 @@
 pub fn shell_sort<T: Ord>(arr: &mut [T]) {
     let mut h = calc_max_h(arr.len());
-
     while h > 0 {
         h_sort(arr, h);
         h /= 3;
@@ -8,13 +7,11 @@ pub fn shell_sort<T: Ord>(arr: &mut [T]) {
 }
 
 fn h_sort<T: Ord>(arr: &mut [T], h: usize) {
-    for offset in 0..h {
-        for i in (offset..arr.len()).step_by(h) {
-            let mut j = i;
-            while j >= h && arr[j] < arr[j - h] {
-                arr.swap(j, j - h);
-                j -= h;
-            }
+    for i in h..arr.len() {
+        let mut j = i;
+        while j >= h && arr[j] < arr[j - h] {
+            arr.swap(j, j - h);
+            j -= h;
         }
     }
 }
