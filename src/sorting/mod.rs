@@ -1,10 +1,10 @@
 pub mod bubble;
-pub mod insert;
+pub mod insertion;
 pub mod selection;
 pub mod shell;
 
 pub use bubble::bubble_sort;
-pub use insert::insert_sort;
+pub use insertion::insertion_sort;
 pub use selection::selection_sort;
 pub use shell::shell_sort;
 
@@ -47,8 +47,8 @@ mod tests {
     }
 
     #[test]
-    fn test_insert_sort() {
-        test_sort_fn(insert_sort);
+    fn test_insertion_sort() {
+        test_sort_fn(insertion_sort);
     }
 
     #[test]
