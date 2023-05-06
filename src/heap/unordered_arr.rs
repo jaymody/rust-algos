@@ -1,3 +1,16 @@
+/*
+The approach used here is to keep a fixed length arr with items that unordered
+and keep a value that tracks the current number of items.
+
+Pushing to the heap requires O(1) time. We just add the item to the end of the
+array.
+
+Peeking and popping require O(n) time. For peeking, we linearly search the array
+for the smallest entry. For popping, we do the same but once we find the entry,
+we exchange it with the last entry and then remove the last entry (which since
+we swapped, is the smallest item).
+*/
+
 use super::MinHeap;
 
 pub struct MinHeapUnorderedArr<T: Ord, const CAPACITY: usize> {

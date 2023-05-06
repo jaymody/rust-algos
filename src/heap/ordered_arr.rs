@@ -1,3 +1,15 @@
+/*
+The approach used here is to keep a fixed length arr with items in reverse
+sorted order (descending sorted) and a value that tracks the current number
+of items.
+
+Pushing to the heap requires O(n) time. We first find the position the item
+belongs and then we shift the rest of the items to make space for it.
+
+Peeking and popping require O(1) time, since the array is sorted, we simply
+retrieve the last entry.
+*/
+
 use super::MinHeap;
 
 pub struct MinHeapOrderedArr<T: Ord, const CAPACITY: usize> {
