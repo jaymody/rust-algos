@@ -1,7 +1,7 @@
-use rand::seq::SliceRandom;
+use crate::random::fisher_yates_shuffle;
 
 pub fn quick_sort<T: Ord>(arr: &mut [T]) {
-    arr.shuffle(&mut rand::thread_rng());
+    fisher_yates_shuffle(arr);
     sort(arr);
 }
 
