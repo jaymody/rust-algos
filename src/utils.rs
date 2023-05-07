@@ -1,3 +1,6 @@
+/// Inserts `item` at index `i` in the array `arr`, shifting the array to
+/// the right by one to make space for the item. As a result, the last item
+/// in the array no longer has a spot to move to, so it is returned.
 pub fn insert_and_shift<T>(arr: &mut [T], item: T, i: usize) -> T {
     let mut prev = item;
     for j in i..arr.len() {
@@ -6,6 +9,9 @@ pub fn insert_and_shift<T>(arr: &mut [T], item: T, i: usize) -> T {
     return prev;
 }
 
+/// Deletes the entry at index `i` in the array, and shifts the array to the
+/// left by one to fill it's place. As a result, the last item in the array
+/// will be empty and requires a value, so it is filled with `last`.
 pub fn delete_and_shift<T>(arr: &mut [T], last: T, i: usize) {
     let len = arr.len();
     arr[i..len].rotate_left(1);
