@@ -85,7 +85,7 @@ impl<T> LinkedList<T> for SinglyLinkedList<T> {
     }
 
     fn peek_front(&self) -> Option<&T> {
-        self.into_iter().nth(0)
+        self.into_iter().next()
     }
 
     fn peek_back(&self) -> Option<&T> {

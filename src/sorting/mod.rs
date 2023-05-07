@@ -22,7 +22,7 @@ mod tests {
 
     fn test_sort_fn<F>(sort_fn: F)
     where
-        F: Fn(&mut [i32]) -> (),
+        F: Fn(&mut [i32]),
     {
         let test_example = |input: &mut [i32], output: &[i32]| {
             sort_fn(input);

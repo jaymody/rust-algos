@@ -100,7 +100,7 @@ mod tests {
 
         // test iters
         for x in &mut list {
-            *x = *x + 10;
+            *x += 10;
         }
 
         for (i, x) in (&list).into_iter().enumerate() {
@@ -180,7 +180,7 @@ mod tests {
 
         // test iters
         for x in &mut list {
-            *x = *x + 10;
+            *x += 10;
         }
 
         for (i, x) in (&list).into_iter().enumerate() {

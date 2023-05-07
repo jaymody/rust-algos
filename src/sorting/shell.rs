@@ -115,9 +115,8 @@ fn calc_max_h(arr_len: usize) -> usize {
         return 0;
     }
 
-    let n =
-        ((2.0 * (arr_len - 1) as f64 + 1.0).log2() / (3.0 as f64).log2() - 1.0).floor() as usize;
-    let h = (1 - (3 as i32).pow(n as u32 + 1)) / -2;
+    let n = ((2.0 * (arr_len - 1) as f64 + 1.0).log2() / 3.0_f64.log2() - 1.0).floor() as usize;
+    let h = (1 - 3_i32.pow(n as u32 + 1)) / -2;
 
     h as usize
 }

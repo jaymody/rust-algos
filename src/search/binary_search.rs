@@ -23,7 +23,7 @@ fn search<T: Ord>(arr: &[T], target: &T, rev: bool) -> Result<usize, usize> {
         Ordering::Greater
     };
 
-    if arr.len() == 0 {
+    if arr.is_empty() {
         return Err(0);
     }
 
