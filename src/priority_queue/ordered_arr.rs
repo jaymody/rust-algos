@@ -13,7 +13,7 @@ Peeking and popping require O(1) time, since the array is sorted, we simply
 retrieve the last entry.
 */
 
-use crate::search::binary_search_insert_index_rev;
+use crate::{search::binary_search_insert_index_rev, utils::insert_and_shift};
 
 use super::PriorityQueue;
 
@@ -39,12 +39,9 @@ impl<T: Ord, const CAPACITY: usize> PriorityQueue<T> for PriorityQueueOrderedArr
             return Err("capacity full".to_string());
         }
 
-        let mut prev = Some(item);
-        let i = binary_search_insert_index_rev(&self.arr[..self.size], &prev);
-
-        for j in i..=self.size {
-            (self.arr[j], prev) = (prev, self.arr[j].take());
-        }
+        let item = Some(item);
+        let i = binary_search_insert_index_rev(&self.arr[..self.size], &item);
+        self.arr[self.size] = insert_and_shift(&mut self.arr[..self.size], item, i);
         self.size += 1;
         Ok(())
     }

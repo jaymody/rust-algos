@@ -5,3 +5,4 @@ pub mod random;
 pub mod search;
 pub mod sorting;
 pub mod stack;
+mod utils;
