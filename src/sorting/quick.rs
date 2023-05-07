@@ -1,7 +1,7 @@
-use crate::random::fisher_yates_shuffle;
+use crate::random::shuffle_arr;
 
 pub fn quick_sort<T: Ord>(arr: &mut [T]) {
-    fisher_yates_shuffle(arr);
+    shuffle_arr(arr);
     sort(arr);
 }
 

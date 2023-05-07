@@ -16,7 +16,7 @@ pub trait PriorityQueue<T: Ord> {
 
 #[cfg(test)]
 mod tests {
-    use crate::random::fisher_yates_shuffle;
+    use crate::random::shuffle_arr;
 
     use super::*;
 
@@ -62,7 +62,7 @@ mod tests {
         assert_eq!(pq.pop(), None);
 
         let mut vec: Vec<i32> = (-100..=100).collect();
-        fisher_yates_shuffle(&mut vec[..]);
+        shuffle_arr(&mut vec[..]);
         for x in vec.into_iter() {
             pq.push(x).unwrap();
         }
