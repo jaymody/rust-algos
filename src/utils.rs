@@ -9,13 +9,13 @@ pub fn insert_and_shift<T>(arr: &mut [T], item: T, i: usize) -> T {
     return prev;
 }
 
-/// Deletes the entry at index `i` in the array, and shifts the array to the
+/// Pops the entry at index `i` in the array, and shifts the array to the
 /// left by one to fill it's place. As a result, the last item in the array
 /// will be empty and requires a value, so it is filled with `last`.
-pub fn delete_and_shift<T>(arr: &mut [T], last: T, i: usize) {
+pub fn pop_and_shift<T>(arr: &mut [T], last: T, i: usize) -> T {
     let len = arr.len();
     arr[i..len].rotate_left(1);
-    arr[len - 1] = last;
+    std::mem::replace(&mut arr[len - 1], last)
 }
 
 #[cfg(test)]
@@ -25,26 +25,26 @@ mod tests {
     #[test]
     fn test_insert_and_shift() {
         let mut arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-        insert_and_shift(&mut arr, 0, 1);
+        assert_eq!(insert_and_shift(&mut arr, 0, 1), 9);
         assert_eq!(arr, [0, 0, 1, 2, 3, 4, 5, 6, 7, 8]);
-        insert_and_shift(&mut arr, 10, 0);
+        assert_eq!(insert_and_shift(&mut arr, 10, 0), 8);
         assert_eq!(arr, [10, 0, 0, 1, 2, 3, 4, 5, 6, 7]);
-        insert_and_shift(&mut arr, -1, 9);
+        assert_eq!(insert_and_shift(&mut arr, -1, 9), 7);
         assert_eq!(arr, [10, 0, 0, 1, 2, 3, 4, 5, 6, -1]);
-        insert_and_shift(&mut arr, -2, 8);
+        assert_eq!(insert_and_shift(&mut arr, -2, 8), -1);
         assert_eq!(arr, [10, 0, 0, 1, 2, 3, 4, 5, -2, 6]);
     }
 
     #[test]
-    fn test_delete_and_shift() {
+    fn test_pop_and_shift() {
         let mut arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-        delete_and_shift(&mut arr, -1, 3);
+        assert_eq!(pop_and_shift(&mut arr, -1, 3), 3);
         assert_eq!(arr, [0, 1, 2, 4, 5, 6, 7, 8, 9, -1]);
-        delete_and_shift(&mut arr, -2, 9);
+        assert_eq!(pop_and_shift(&mut arr, -2, 9), -1);
         assert_eq!(arr, [0, 1, 2, 4, 5, 6, 7, 8, 9, -2]);
-        delete_and_shift(&mut arr, 100, 0);
+        assert_eq!(pop_and_shift(&mut arr, 100, 0), 0);
         assert_eq!(arr, [1, 2, 4, 5, 6, 7, 8, 9, -2, 100]);
-        delete_and_shift(&mut arr, 200, 1);
+        assert_eq!(pop_and_shift(&mut arr, 200, 1), 2);
         assert_eq!(arr, [1, 4, 5, 6, 7, 8, 9, -2, 100, 200]);
     }
 }
