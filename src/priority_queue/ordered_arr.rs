@@ -31,7 +31,7 @@ impl<T: Ord, const CAPACITY: usize> PriorityQueueOrderedArr<T, CAPACITY> {
 impl<T: Ord, const CAPACITY: usize> PriorityQueue<T> for PriorityQueueOrderedArr<T, CAPACITY> {
     fn push(&mut self, item: T) -> Result<(), String> {
         if self.size >= CAPACITY {
-            return Err("queue full".to_string());
+            return Err("capacity full".to_string());
         }
 
         let mut i = 0;

@@ -46,7 +46,7 @@ impl<T: Ord, const CAPACITY: usize> PriorityQueueBinaryHeap<T, CAPACITY> {
 impl<T: Ord, const CAPACITY: usize> PriorityQueue<T> for PriorityQueueBinaryHeap<T, CAPACITY> {
     fn push(&mut self, item: T) -> Result<(), String> {
         if self.size >= CAPACITY {
-            return Err("queue full".to_string());
+            return Err("capacity full".to_string());
         }
         self.arr[self.size] = Some(item);
         self.swim(self.size);
