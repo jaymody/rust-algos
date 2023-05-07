@@ -1,4 +1,5 @@
 pub mod bubble;
+pub mod heap;
 pub mod insertion;
 pub mod merge;
 pub mod quick;
@@ -6,6 +7,7 @@ pub mod selection;
 pub mod shell;
 
 pub use bubble::bubble_sort;
+pub use heap::heap_sort;
 pub use insertion::insertion_sort;
 pub use merge::merge_sort;
 pub use quick::quick_sort;
@@ -82,5 +84,10 @@ mod tests {
     #[test]
     fn test_merge_sort() {
         test_sort_fn(merge_sort);
+    }
+
+    #[test]
+    fn test_heap_sort() {
+        test_sort_fn(heap_sort);
     }
 }
