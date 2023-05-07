@@ -1,31 +1,19 @@
 use std::cmp::Ordering;
 
 pub fn binary_search<T: Ord>(arr: &[T], target: &T) -> Option<usize> {
-    match search(arr, target, false) {
-        Err(_) => None,
-        Ok(i) => Some(i),
-    }
+    search(arr, target, false).ok()
 }
 
 pub fn binary_search_rev<T: Ord>(arr: &[T], target: &T) -> Option<usize> {
-    match search(arr, target, true) {
-        Err(_) => None,
-        Ok(i) => Some(i),
-    }
+    search(arr, target, true).ok()
 }
 
 pub fn binary_search_insert_index<T: Ord>(arr: &[T], target: &T) -> usize {
-    match search(arr, target, false) {
-        Err(i) => i,
-        Ok(i) => i,
-    }
+    search(arr, target, false).unwrap_or_else(|x| x)
 }
 
 pub fn binary_search_insert_index_rev<T: Ord>(arr: &[T], target: &T) -> usize {
-    match search(arr, target, true) {
-        Err(i) => i,
-        Ok(i) => i,
-    }
+    search(arr, target, true).unwrap_or_else(|x| x)
 }
 
 fn search<T: Ord>(arr: &[T], target: &T, rev: bool) -> Result<usize, usize> {
