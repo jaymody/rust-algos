@@ -1,10 +1,10 @@
-pub mod bubble;
-pub mod heap;
-pub mod insertion;
-pub mod merge;
-pub mod quick;
-pub mod selection;
-pub mod shell;
+mod bubble;
+mod heap;
+mod insertion;
+mod merge;
+mod quick;
+mod selection;
+mod shell;
 
 pub use bubble::bubble_sort;
 pub use heap::heap_sort;

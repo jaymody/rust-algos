@@ -1,4 +1,4 @@
-pub mod queue_linked_list;
+mod queue_linked_list;
 
 pub use queue_linked_list::QueueLinkedList;
 

@@ -1,5 +1,5 @@
-pub mod stack_fixed_arr;
-pub mod stack_linked_list;
+mod stack_fixed_arr;
+mod stack_linked_list;
 
 pub use stack_fixed_arr::StackFixedArray;
 pub use stack_linked_list::StackLinkedList;

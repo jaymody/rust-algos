@@ -1,5 +1,5 @@
-pub mod doubly;
-pub mod singly;
+mod doubly;
+mod singly;
 
 pub use doubly::DoublyLinkedList;
 pub use singly::SinglyLinkedList;

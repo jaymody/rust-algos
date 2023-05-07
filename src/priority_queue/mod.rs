@@ -1,6 +1,6 @@
-pub mod heap;
-pub mod ordered_arr;
-pub mod unordered_arr;
+mod heap;
+mod ordered_arr;
+mod unordered_arr;
 
 pub use heap::PriorityQueueBinaryHeap;
 pub use ordered_arr::PriorityQueueOrderedArr;
