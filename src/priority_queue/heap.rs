@@ -1,5 +1,3 @@
-use std::cmp::min_by;
-
 use super::PriorityQueue;
 
 pub struct PriorityQueueBinaryHeap<T: Ord, const CAPACITY: usize> {
@@ -17,11 +15,19 @@ impl<T: Ord, const CAPACITY: usize> PriorityQueueBinaryHeap<T, CAPACITY> {
     }
 
     fn sink(&mut self, i: usize) {
-        if i < self.size {
-            let c = min_by(2 * i, 2 * i + 1, |x, y| self.arr[*x].cmp(&self.arr[*y]));
-            if self.arr[c].is_some() && self.arr[i] > self.arr[c] {
-                self.arr.swap(i, c);
-                self.sink(c);
+        let l = 2 * i;
+        let r = 2 * i + 1;
+
+        if l < self.size {
+            let min_child_i = if r < self.size && self.arr[r] < self.arr[l] {
+                r
+            } else {
+                l
+            };
+
+            if self.arr[i] > self.arr[min_child_i] {
+                self.arr.swap(i, min_child_i);
+                self.sink(min_child_i);
             }
         }
     }

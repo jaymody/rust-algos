@@ -16,6 +16,8 @@ pub trait PriorityQueue<T: Ord> {
 
 #[cfg(test)]
 mod tests {
+    use crate::random::fisher_yates_shuffle;
+
     use super::*;
 
     fn test(pq: &mut dyn PriorityQueue<i32>) {
@@ -58,11 +60,20 @@ mod tests {
         assert_eq!(pq.pop(), Some(2));
         assert_eq!(pq.pop(), Some(3));
         assert_eq!(pq.pop(), None);
+
+        let mut vec: Vec<i32> = (-100..=100).collect();
+        fisher_yates_shuffle(&mut vec[..]);
+        for x in vec.into_iter() {
+            pq.push(x).unwrap();
+        }
+        for i in -100..=100 {
+            assert_eq!(pq.pop(), Some(i));
+        }
     }
 
     #[test]
     fn test_unordered_arr() {
-        let mut pq: PriorityQueueUnorderedArr<i32, 99> = PriorityQueueUnorderedArr::new();
+        let mut pq: PriorityQueueUnorderedArr<i32, 256> = PriorityQueueUnorderedArr::new();
         test(&mut pq);
 
         let mut pq: PriorityQueueUnorderedArr<i32, 5> = PriorityQueueUnorderedArr::new();
@@ -76,7 +87,7 @@ mod tests {
 
     #[test]
     fn test_ordered_arr() {
-        let mut pq: PriorityQueueOrderedArr<i32, 99> = PriorityQueueOrderedArr::new();
+        let mut pq: PriorityQueueOrderedArr<i32, 256> = PriorityQueueOrderedArr::new();
         test(&mut pq);
 
         let mut pq: PriorityQueueOrderedArr<i32, 5> = PriorityQueueOrderedArr::new();
@@ -90,7 +101,7 @@ mod tests {
 
     #[test]
     fn test_binary_heap() {
-        let mut pq: PriorityQueueBinaryHeap<i32, 99> = PriorityQueueBinaryHeap::new();
+        let mut pq: PriorityQueueBinaryHeap<i32, 256> = PriorityQueueBinaryHeap::new();
         test(&mut pq);
 
         let mut pq: PriorityQueueBinaryHeap<i32, 5> = PriorityQueueBinaryHeap::new();
