@@ -90,5 +90,10 @@ mod tests {
         st.put("apple", 20).unwrap();
         assert_eq!(st.get("apple"), Some(&20));
         assert_eq!(st.size(), 3);
+
+        let mut iter = (&st).into_iter();
+        assert_eq!(iter.next(), Some(&"apple"));
+        assert_eq!(iter.next(), Some(&"banana"));
+        assert_eq!(iter.next(), Some(&"dog"));
     }
 }

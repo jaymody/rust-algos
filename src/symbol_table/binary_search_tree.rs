@@ -1,10 +1,12 @@
 use std::ops::Deref;
 
+use crate::stack::{Stack, StackLinkedList};
+
 use super::{KeyT, SymbolTable};
 
 type Link<K, V> = Option<Box<Node<K, V>>>;
 
-struct Node<K, V> {
+pub struct Node<K, V> {
     key: K,
     val: V,
     left: Link<K, V>,
@@ -147,14 +149,37 @@ impl<K: KeyT, V> SymbolTable<K, V> for BinarySearchTree<K, V> {
 }
 
 pub struct IntoIter<'a, K: KeyT, V> {
-    tree: &'a BinarySearchTree<K, V>,
+    pub stack: StackLinkedList<&'a Node<K, V>>,
+}
+
+impl<'a, K: KeyT, V> IntoIter<'a, K, V> {
+    pub fn new(tree: &'a BinarySearchTree<K, V>) -> Self {
+        let mut iter = IntoIter {
+            stack: StackLinkedList::new(),
+        };
+        iter.push_left_nodes(&tree.root);
+        iter
+    }
+
+    pub fn push_left_nodes(&mut self, mut link: &'a Link<K, V>) {
+        while let Some(node) = link {
+            self.stack.push(node.deref()).unwrap();
+            link = &node.left;
+        }
+    }
 }
 
 impl<'a, K: KeyT, V> Iterator for IntoIter<'a, K, V> {
     type Item = &'a K;
 
     fn next(&mut self) -> Option<Self::Item> {
-        todo!()
+        match self.stack.pop() {
+            None => None,
+            Some(node) => {
+                self.push_left_nodes(&node.right);
+                Some(&node.key)
+            }
+        }
     }
 }
 
@@ -164,6 +189,6 @@ impl<'a, K: KeyT, V> IntoIterator for &'a BinarySearchTree<K, V> {
     type IntoIter = IntoIter<'a, K, V>;
 
     fn into_iter(self) -> Self::IntoIter {
-        todo!()
+        IntoIter::new(self)
     }
 }
