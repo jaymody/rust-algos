@@ -4,7 +4,7 @@ pub use doubly::DoublyLinkedList;
 
 /// List data structure that can hold a variable number of items.
 ///
-/// TODO: add various functions like appending one list to another, peek_at,
+// / TODO: add various functions like appending one list to another, peek_at,
 /// pop_at, push_at, double ended iterators, reverse, truncate, get slice, etc
 /// ...
 pub trait List<T>

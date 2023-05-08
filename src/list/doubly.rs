@@ -73,48 +73,32 @@ impl<T> List<T> for DoublyLinkedList<T> {
 
     fn pop_front(&mut self) -> Option<T> {
         unsafe {
-            if self.is_empty() {
-                None
-            } else {
+            (!self.is_empty()).then(|| {
                 let old_head = self.head;
                 self.head = (*old_head).next;
                 self.size -= 1;
-                Some(Box::from_raw(old_head).item)
-            }
+                Box::from_raw(old_head).item
+            })
         }
     }
 
     fn pop_back(&mut self) -> Option<T> {
         unsafe {
-            if self.is_empty() {
-                None
-            } else {
+            (!self.is_empty()).then(|| {
                 let old_tail = self.tail;
                 self.tail = (*old_tail).prev;
                 self.size -= 1;
-                Some(Box::from_raw(old_tail).item)
-            }
+                Box::from_raw(old_tail).item
+            })
         }
     }
 
     fn peek_front(&self) -> Option<&T> {
-        unsafe {
-            if !self.is_empty() {
-                Some(&(*self.head).item)
-            } else {
-                None
-            }
-        }
+        unsafe { (!self.is_empty()).then(|| &(*self.head).item) }
     }
 
     fn peek_back(&self) -> Option<&T> {
-        unsafe {
-            if !self.is_empty() {
-                Some(&(*self.tail).item)
-            } else {
-                None
-            }
-        }
+        unsafe { (!self.is_empty()).then(|| &(*self.tail).item) }
     }
 
     fn is_empty(&self) -> bool {
