@@ -48,7 +48,7 @@ impl<T> Queue<T> for QueueLinkedList<T> {
     /// empty, we simply set `head = new_node` and then have tail point to head.
     /// Otherwise, set `tail.next = new_node` and then update tail to point to
     /// the new node. This can all be done in O(1) time.
-    fn push(&mut self, item: T) {
+    fn push(&mut self, item: T) -> Result<(), String> {
         unsafe {
             let mut new_tail = Box::new(Node::new(item, None));
 
@@ -62,6 +62,7 @@ impl<T> Queue<T> for QueueLinkedList<T> {
 
             self.size += 1;
         }
+        Ok(())
     }
 
     /// Pop the next item from the queue (None if queue is empty).
