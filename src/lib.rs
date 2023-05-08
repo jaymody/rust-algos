@@ -1,4 +1,4 @@
-pub mod linked_list;
+pub mod list;
 pub mod priority_queue;
 pub mod queue;
 pub mod random;

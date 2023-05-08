@@ -1,6 +1,6 @@
 use std::{marker::PhantomData, ptr::null_mut};
 
-use super::LinkedList;
+use super::List;
 
 /* types and structs */
 type Link<T> = *mut Node<T>;
@@ -33,8 +33,8 @@ impl<T> DoublyLinkedList<T> {
     }
 }
 
-/* impl LinkedList trait */
-impl<T> LinkedList<T> for DoublyLinkedList<T> {
+/* impl List trait */
+impl<T> List<T> for DoublyLinkedList<T> {
     fn push_front(&mut self, item: T) {
         let mut new_head = Node::new(item, null_mut(), null_mut());
 

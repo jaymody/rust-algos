@@ -1,5 +1,5 @@
 use super::Stack;
-use crate::linked_list::{LinkedList, SinglyLinkedList};
+use crate::list::{List, SinglyLinkedList};
 
 pub struct StackLinkedList<T> {
     list: SinglyLinkedList<T>,

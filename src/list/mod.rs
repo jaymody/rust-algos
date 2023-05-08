@@ -4,7 +4,7 @@ mod singly;
 pub use doubly::DoublyLinkedList;
 pub use singly::SinglyLinkedList;
 
-pub trait LinkedList<T>
+pub trait List<T>
 where
     Self: IntoIterator<Item = T>,
     for<'a> &'a Self: IntoIterator<Item = &'a T>,

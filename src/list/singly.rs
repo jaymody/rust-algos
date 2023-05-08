@@ -1,6 +1,6 @@
 use std::ops::DerefMut;
 
-use super::LinkedList;
+use super::List;
 
 /* node and link structs */
 type Link<T> = Option<Box<Node<T>>>;
@@ -31,7 +31,8 @@ impl<T> SinglyLinkedList<T> {
     }
 }
 
-impl<T> LinkedList<T> for SinglyLinkedList<T> {
+/* impl List trait */
+impl<T> List<T> for SinglyLinkedList<T> {
     fn push_front(&mut self, item: T) {
         self.head = Some(Box::new(Node::new(item, self.head.take())));
         self.size += 1;
