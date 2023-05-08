@@ -4,29 +4,29 @@ use super::Stack;
 ///
 /// We push elements onto the end of the array, and pop elements from the end,
 /// both in O(1) time.
-pub struct StackFixedArray<T, const MAX_SIZE: usize> {
-    arr: [Option<T>; MAX_SIZE],
+pub struct StackFixedArray<T, const CAPACITY: usize> {
+    arr: [Option<T>; CAPACITY],
     size: usize,
 }
 
-impl<T, const MAX_SIZE: usize> StackFixedArray<T, MAX_SIZE> {
+impl<T, const CAPACITY: usize> StackFixedArray<T, CAPACITY> {
     const INIT: Option<T> = None;
 
     pub fn new() -> Self {
         StackFixedArray {
-            arr: [Self::INIT; MAX_SIZE],
+            arr: [Self::INIT; CAPACITY],
             size: 0,
         }
     }
 }
 
-impl<T, const MAX_SIZE: usize> Stack<T> for StackFixedArray<T, MAX_SIZE> {
+impl<T, const CAPACITY: usize> Stack<T> for StackFixedArray<T, CAPACITY> {
     /// Push an item onto the stack.
     ///
     /// ### Implementation
     /// Adds the item to the end of the array in O(1) time.
     fn push(&mut self, item: T) -> Result<(), String> {
-        if self.size >= MAX_SIZE {
+        if self.size >= CAPACITY {
             return Err("capacity full".to_string());
         }
         self.arr[self.size] = Some(item);
