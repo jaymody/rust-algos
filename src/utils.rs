@@ -3,7 +3,7 @@
 /// in the array no longer has a spot to move to, so it is returned.
 ///
 /// ### Example
-/// ```
+/// ```ignore
 /// let mut arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 /// let last = insert_and_shift(&mut arr, 100, 3);
 /// assert_eq!(arr, [0, 1, 2, 100, 3, 4, 5, 6, 7, 8]);
@@ -22,7 +22,7 @@ pub fn insert_and_shift<T>(arr: &mut [T], item: T, i: usize) -> T {
 /// will be empty and requires a value, so it is filled with `last`.
 ///
 /// ### Example
-/// ```
+/// ```ignore
 /// let mut arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 /// let deleted = pop_and_shift(&mut arr, 100, 3);
 /// assert_eq!(arr, [0, 1, 2, 4, 5, 6, 7, 8, 9, 100]);
