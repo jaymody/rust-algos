@@ -16,6 +16,13 @@ impl<T> Node<T> {
     }
 }
 
+/// A singly linked list queue implementation.
+///
+/// In addition to the head, a tail reference is also kept so that pushing to
+/// the queue remains an O(1) operation, in addition to popping and peeking.
+///
+/// Because only one variable can own a given object at a time in rust, the tail
+/// is implemented with unsafe rust using a raw pointer.
 pub struct QueueLinkedList<T> {
     head: Link<T>,
     tail: *mut Node<T>,
@@ -34,6 +41,13 @@ impl<T> QueueLinkedList<T> {
 
 /* impl Queue trait */
 impl<T> Queue<T> for QueueLinkedList<T> {
+    /// Push an item to the queue.
+    ///
+    /// ### Implementation
+    /// We add new items to the end of the linked list.  If the linked list is
+    /// empty, we simply set `head = new_node` and then have tail point to head.
+    /// Otherwise, set `tail.next = new_node` and then update tail to point to
+    /// the new node. This can all be done in O(1) time.
     fn push(&mut self, item: T) {
         unsafe {
             let mut new_tail = Box::new(Node::new(item, None));
@@ -50,6 +64,11 @@ impl<T> Queue<T> for QueueLinkedList<T> {
         }
     }
 
+    /// Pop the next item from the queue (None if queue is empty).
+    ///
+    /// ### Implementation
+    /// The next item from the queue is always the head of the queue. So we
+    /// set `head = head.next` and then return the old head.
     fn pop(&mut self) -> Option<T> {
         let old_head = self.head.take()?;
         self.size -= 1;
@@ -63,18 +82,13 @@ impl<T> Queue<T> for QueueLinkedList<T> {
         Some(old_head.item)
     }
 
-    fn peek_front(&self) -> Option<&T> {
+    /// Peek at the next item in the queue (None if queue is empty).
+    ///
+    /// ### Implementation
+    /// The next item from the queue is always the head of the queue, so we
+    /// just return a reference to the head item.
+    fn peek(&self) -> Option<&T> {
         Some(&self.head.as_ref()?.item)
-    }
-
-    fn peek_back(&self) -> Option<&T> {
-        unsafe {
-            if !self.tail.is_null() {
-                Some(&(*self.tail).item)
-            } else {
-                None
-            }
-        }
     }
 
     fn is_empty(&self) -> bool {
