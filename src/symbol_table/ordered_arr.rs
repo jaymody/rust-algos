@@ -86,7 +86,12 @@ impl<'a, K: KeyT, V, const CAPACITY: usize> Iterator for IntoIter<'a, K, V, CAPA
     type Item = &'a K;
 
     fn next(&mut self) -> Option<Self::Item> {
-        self.st.keys[self.i].as_ref()
+        if self.i >= self.st.size() {
+            None
+        } else {
+            self.i += 1;
+            self.st.keys[self.i - 1].as_ref()
+        }
     }
 }
 

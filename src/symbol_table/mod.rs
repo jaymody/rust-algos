@@ -53,6 +53,13 @@ mod tests {
         assert!(st.put("b", 1).is_ok());
         assert!(st.put("a", 1).is_ok());
         assert!(st.put("c", 1).is_err());
+
+        let mut iter = (&st).into_iter();
+        assert_eq!(iter.next(), Some(&"a"));
+        assert_eq!(iter.next(), Some(&"apple"));
+        assert_eq!(iter.next(), Some(&"b"));
+        assert_eq!(iter.next(), Some(&"banana"));
+        assert_eq!(iter.next(), Some(&"dog"));
     }
 
     #[test]
