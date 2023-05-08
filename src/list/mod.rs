@@ -37,81 +37,81 @@ mod tests {
 
     #[test]
     fn test_doubly() {
-        // let mut list = DoublyLinkedList::new();
-        // assert_eq!(list.pop_front(), None);
-        // assert_eq!(list.is_empty(), true);
-        // assert_eq!(list.size(), 0);
+        let mut list = DoublyLinkedList::new();
+        assert_eq!(list.pop_front(), None);
+        assert_eq!(list.is_empty(), true);
+        assert_eq!(list.size(), 0);
 
-        // // push front pop front
-        // list.push_front(1);
-        // list.push_front(2);
-        // assert_eq!(list.size(), 2);
-        // assert_eq!(list.is_empty(), false);
-        // list.push_front(3);
+        // push front pop front
+        list.push_front(1);
+        list.push_front(2);
+        assert_eq!(list.size(), 2);
+        assert_eq!(list.is_empty(), false);
+        list.push_front(3);
 
-        // assert_eq!(list.pop_front(), Some(3));
-        // assert_eq!(list.pop_front(), Some(2));
-        // assert_eq!(list.size(), 1);
-        // assert_eq!(list.pop_front(), Some(1));
-        // assert_eq!(list.pop_front(), None);
-        // assert_eq!(list.size(), 0);
-        // assert_eq!(list.is_empty(), true);
+        assert_eq!(list.pop_front(), Some(3));
+        assert_eq!(list.pop_front(), Some(2));
+        assert_eq!(list.size(), 1);
+        assert_eq!(list.pop_front(), Some(1));
+        assert_eq!(list.pop_front(), None);
+        assert_eq!(list.size(), 0);
+        assert_eq!(list.is_empty(), true);
 
-        // // push back pop front
-        // list.push_back(1);
-        // list.push_back(2);
-        // list.push_back(3);
+        // push back pop front
+        list.push_back(1);
+        list.push_back(2);
+        list.push_back(3);
 
-        // assert_eq!(list.pop_front(), Some(1));
-        // assert_eq!(list.pop_front(), Some(2));
-        // assert_eq!(list.pop_front(), Some(3));
-        // assert_eq!(list.pop_front(), None);
+        assert_eq!(list.pop_front(), Some(1));
+        assert_eq!(list.pop_front(), Some(2));
+        assert_eq!(list.pop_front(), Some(3));
+        assert_eq!(list.pop_front(), None);
 
-        // // push front pop back
-        // list.push_front(1);
-        // list.push_front(2);
-        // list.push_front(3);
+        // push front pop back
+        list.push_front(1);
+        list.push_front(2);
+        list.push_front(3);
 
-        // assert_eq!(list.pop_back(), Some(1));
-        // assert_eq!(list.pop_back(), Some(2));
-        // assert_eq!(list.pop_back(), Some(3));
-        // assert_eq!(list.pop_back(), None);
+        assert_eq!(list.pop_back(), Some(1));
+        assert_eq!(list.pop_back(), Some(2));
+        assert_eq!(list.pop_back(), Some(3));
+        assert_eq!(list.pop_back(), None);
 
-        // // push back pop back
-        // list.push_back(1);
-        // list.push_back(2);
-        // list.push_back(3);
+        // push back pop back
+        list.push_back(1);
+        list.push_back(2);
+        list.push_back(3);
 
-        // assert_eq!(list.pop_back(), Some(3));
-        // assert_eq!(list.pop_back(), Some(2));
-        // assert_eq!(list.pop_back(), Some(1));
-        // assert_eq!(list.pop_back(), None);
+        assert_eq!(list.pop_back(), Some(3));
+        assert_eq!(list.pop_back(), Some(2));
+        assert_eq!(list.pop_back(), Some(1));
+        assert_eq!(list.pop_back(), None);
 
-        // // peek front and back
-        // assert_eq!(list.peek_front(), None);
-        // assert_eq!(list.peek_back(), None);
+        // peek front and back
+        assert_eq!(list.peek_front(), None);
+        assert_eq!(list.peek_back(), None);
 
-        // list.push_back(1);
-        // assert_eq!(list.peek_front(), Some(&1));
-        // assert_eq!(list.peek_back(), Some(&1));
+        list.push_back(1);
+        assert_eq!(list.peek_front(), Some(&1));
+        assert_eq!(list.peek_back(), Some(&1));
 
-        // list.push_back(2);
-        // list.push_back(3);
+        list.push_back(2);
+        list.push_back(3);
 
-        // assert_eq!(list.peek_front(), Some(&1));
-        // assert_eq!(list.peek_back(), Some(&3));
+        assert_eq!(list.peek_front(), Some(&1));
+        assert_eq!(list.peek_back(), Some(&3));
 
-        // // test iters
-        // for x in &mut list {
-        //     *x += 10;
-        // }
+        // test iters
+        for x in &mut list {
+            *x += 10;
+        }
 
-        // for (i, x) in (&list).into_iter().enumerate() {
-        //     assert_eq!(x, &(i + 11))
-        // }
+        for (i, x) in (&list).into_iter().enumerate() {
+            assert_eq!(x, &(i + 11))
+        }
 
-        // for (i, x) in list.into_iter().enumerate() {
-        //     assert_eq!(x, i + 11)
-        // }
+        for (i, x) in list.into_iter().enumerate() {
+            assert_eq!(x, i + 11)
+        }
     }
 }

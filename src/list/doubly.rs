@@ -12,8 +12,12 @@ struct Node<T> {
 }
 
 impl<T> Node<T> {
-    pub fn new(item: T, prev: Link<T>, next: Link<T>) -> Self {
-        Node { item, prev, next }
+    pub fn new_link(item: T) -> Link<T> {
+        Box::into_raw(Box::new(Node {
+            item: item,
+            prev: null_mut(),
+            next: null_mut(),
+        }))
     }
 }
 
@@ -36,34 +40,40 @@ impl<T> DoublyLinkedList<T> {
 /* impl List trait */
 impl<T> List<T> for DoublyLinkedList<T> {
     fn push_front(&mut self, item: T) {
-        let mut new_head = Node::new(item, null_mut(), null_mut());
+        unsafe {
+            let mut new_head = Node::new_link(item);
 
-        if self.head.is_null() {
-            self.tail = &mut new_head;
-        } else {
-            new_head.next = self.head;
+            if self.is_empty() {
+                self.tail = new_head;
+            } else {
+                (*new_head).next = self.head;
+                (*self.head).prev = new_head;
+            }
+
+            self.head = new_head;
+            self.size += 1;
         }
-
-        self.head = &mut new_head;
-        self.size += 1;
     }
 
     fn push_back(&mut self, item: T) {
-        let mut new_tail = Node::new(item, null_mut(), null_mut());
+        unsafe {
+            let new_tail = Node::new_link(item);
 
-        if self.tail.is_null() {
-            self.head = &mut new_tail;
-        } else {
-            new_tail.next = self.tail;
+            if self.is_empty() {
+                self.head = new_tail;
+            } else {
+                (*self.tail).next = new_tail;
+                (*new_tail).prev = self.tail;
+            }
+
+            self.tail = new_tail;
+            self.size += 1;
         }
-
-        self.tail = &mut new_tail;
-        self.size += 1;
     }
 
     fn pop_front(&mut self) -> Option<T> {
         unsafe {
-            if self.head.is_null() {
+            if self.is_empty() {
                 None
             } else {
                 let old_head = self.head;
@@ -76,7 +86,7 @@ impl<T> List<T> for DoublyLinkedList<T> {
 
     fn pop_back(&mut self) -> Option<T> {
         unsafe {
-            if self.tail.is_null() {
+            if self.is_empty() {
                 None
             } else {
                 let old_tail = self.tail;
@@ -89,7 +99,7 @@ impl<T> List<T> for DoublyLinkedList<T> {
 
     fn peek_front(&self) -> Option<&T> {
         unsafe {
-            if !self.head.is_null() {
+            if !self.is_empty() {
                 Some(&(*self.head).item)
             } else {
                 None
@@ -99,7 +109,7 @@ impl<T> List<T> for DoublyLinkedList<T> {
 
     fn peek_back(&self) -> Option<&T> {
         unsafe {
-            if !self.tail.is_null() {
+            if !self.is_empty() {
                 Some(&(*self.tail).item)
             } else {
                 None
