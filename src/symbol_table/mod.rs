@@ -4,7 +4,10 @@ mod ordered_arr;
 pub use binary_search_tree::BinarySearchTree;
 pub use ordered_arr::OrderedArrST;
 
-pub trait SymbolTable<K: Ord + Clone + Copy, V>
+pub trait KeyT: Ord + Clone + Copy {}
+impl<T: Ord + Clone + Copy> KeyT for T {}
+
+pub trait SymbolTable<K: KeyT, V>
 where
     for<'a> &'a Self: IntoIterator<Item = &'a K>,
 {

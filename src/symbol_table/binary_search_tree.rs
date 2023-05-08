@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use super::SymbolTable;
+use super::{KeyT, SymbolTable};
 
 type Link<K, V> = Option<Box<Node<K, V>>>;
 
@@ -22,12 +22,12 @@ impl<K, V> Node<K, V> {
     }
 }
 
-pub struct BinarySearchTree<K: Ord + Clone + Copy, V> {
+pub struct BinarySearchTree<K: KeyT, V> {
     root: Link<K, V>,
     size: usize,
 }
 
-impl<K: Ord + Clone + Copy, V> BinarySearchTree<K, V> {
+impl<K: KeyT, V> BinarySearchTree<K, V> {
     pub fn new() -> Self {
         BinarySearchTree {
             root: None,
@@ -36,10 +36,7 @@ impl<K: Ord + Clone + Copy, V> BinarySearchTree<K, V> {
     }
 
     fn insert(&mut self, node_to_insert: Node<K, V>) {
-        fn visit<K: Ord + Clone + Copy, V>(
-            link: &mut Link<K, V>,
-            node_to_insert: Node<K, V>,
-        ) -> Link<K, V> {
+        fn visit<K: KeyT, V>(link: &mut Link<K, V>, node_to_insert: Node<K, V>) -> Link<K, V> {
             match link.take() {
                 None => Some(Box::new(node_to_insert)),
                 Some(mut node) => {
@@ -61,10 +58,7 @@ impl<K: Ord + Clone + Copy, V> BinarySearchTree<K, V> {
     }
 
     fn search(&self, key: K) -> Option<&Node<K, V>> {
-        fn visit<'a, K: Ord + Clone + Copy, V>(
-            link: &'a Link<K, V>,
-            key: K,
-        ) -> Option<&'a Node<K, V>> {
+        fn visit<'a, K: KeyT, V>(link: &'a Link<K, V>, key: K) -> Option<&'a Node<K, V>> {
             match link {
                 None => None,
                 Some(node) => {
@@ -83,10 +77,7 @@ impl<K: Ord + Clone + Copy, V> BinarySearchTree<K, V> {
     }
 
     fn delete(&mut self, key: K) -> Option<Node<K, V>> {
-        fn visit<K: Ord + Clone + Copy, V>(
-            mut link: Link<K, V>,
-            key: K,
-        ) -> (Link<K, V>, Option<Node<K, V>>) {
+        fn visit<K: KeyT, V>(mut link: Link<K, V>, key: K) -> (Link<K, V>, Option<Node<K, V>>) {
             match link.take() {
                 None => (None, None),
                 Some(mut node) => {
@@ -132,7 +123,7 @@ impl<K: Ord + Clone + Copy, V> BinarySearchTree<K, V> {
     }
 }
 
-impl<K: Ord + Clone + Copy, V> SymbolTable<K, V> for BinarySearchTree<K, V> {
+impl<K: KeyT, V> SymbolTable<K, V> for BinarySearchTree<K, V> {
     fn put(&mut self, key: K, val: V) -> Result<(), String> {
         self.insert(Node::new(key, val));
         Ok(())
@@ -155,11 +146,11 @@ impl<K: Ord + Clone + Copy, V> SymbolTable<K, V> for BinarySearchTree<K, V> {
     }
 }
 
-pub struct IntoIter<'a, K: Ord + Clone + Copy, V> {
+pub struct IntoIter<'a, K: KeyT, V> {
     tree: &'a BinarySearchTree<K, V>,
 }
 
-impl<'a, K: Ord + Clone + Copy, V> Iterator for IntoIter<'a, K, V> {
+impl<'a, K: KeyT, V> Iterator for IntoIter<'a, K, V> {
     type Item = &'a K;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -167,7 +158,7 @@ impl<'a, K: Ord + Clone + Copy, V> Iterator for IntoIter<'a, K, V> {
     }
 }
 
-impl<'a, K: Ord + Clone + Copy, V> IntoIterator for &'a BinarySearchTree<K, V> {
+impl<'a, K: KeyT, V> IntoIterator for &'a BinarySearchTree<K, V> {
     type Item = &'a K;
 
     type IntoIter = IntoIter<'a, K, V>;

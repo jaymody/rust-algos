@@ -15,15 +15,15 @@ use crate::{
     utils::{insert_and_shift, pop_and_shift},
 };
 
-use super::SymbolTable;
+use super::{KeyT, SymbolTable};
 
-pub struct OrderedArrST<K: Ord + Clone + Copy, V, const CAPACITY: usize> {
+pub struct OrderedArrST<K: KeyT, V, const CAPACITY: usize> {
     keys: [Option<K>; CAPACITY],
     vals: [Option<V>; CAPACITY],
     size: usize,
 }
 
-impl<K: Ord + Clone + Copy, V, const CAPACITY: usize> OrderedArrST<K, V, CAPACITY> {
+impl<K: KeyT, V, const CAPACITY: usize> OrderedArrST<K, V, CAPACITY> {
     const K_INIT: Option<K> = None;
     const V_INIT: Option<V> = None;
 
@@ -36,9 +36,7 @@ impl<K: Ord + Clone + Copy, V, const CAPACITY: usize> OrderedArrST<K, V, CAPACIT
     }
 }
 
-impl<K: Ord + Clone + Copy, V, const CAPACITY: usize> SymbolTable<K, V>
-    for OrderedArrST<K, V, CAPACITY>
-{
+impl<K: KeyT, V, const CAPACITY: usize> SymbolTable<K, V> for OrderedArrST<K, V, CAPACITY> {
     fn put(&mut self, key: K, val: V) -> Result<(), String> {
         let key = Some(key);
         let val = Some(val);
@@ -79,14 +77,12 @@ impl<K: Ord + Clone + Copy, V, const CAPACITY: usize> SymbolTable<K, V>
     }
 }
 
-pub struct IntoIter<'a, K: Ord + Clone + Copy, V, const CAPACITY: usize> {
+pub struct IntoIter<'a, K: KeyT, V, const CAPACITY: usize> {
     st: &'a OrderedArrST<K, V, CAPACITY>,
     i: usize,
 }
 
-impl<'a, K: Ord + Clone + Copy, V, const CAPACITY: usize> Iterator
-    for IntoIter<'a, K, V, CAPACITY>
-{
+impl<'a, K: KeyT, V, const CAPACITY: usize> Iterator for IntoIter<'a, K, V, CAPACITY> {
     type Item = &'a K;
 
     fn next(&mut self) -> Option<Self::Item> {
@@ -94,9 +90,7 @@ impl<'a, K: Ord + Clone + Copy, V, const CAPACITY: usize> Iterator
     }
 }
 
-impl<'a, K: Ord + Clone + Copy, V, const CAPACITY: usize> IntoIterator
-    for &'a OrderedArrST<K, V, CAPACITY>
-{
+impl<'a, K: KeyT, V, const CAPACITY: usize> IntoIterator for &'a OrderedArrST<K, V, CAPACITY> {
     type Item = &'a K;
     type IntoIter = IntoIter<'a, K, V, CAPACITY>;
 
