@@ -1,17 +1,35 @@
 use std::cmp::Ordering;
 
+/// Searches for the index of target in a sorted array in O(log n) time. If
+/// target is found, Some(index_of_match) is returned, else None.
 pub fn binary_search<T: Ord>(arr: &[T], target: &T) -> Option<usize> {
     search(arr, target, false).ok()
 }
 
+/// Same as binary_search, but for reverse ordered arrays (descending order).
 pub fn binary_search_rev<T: Ord>(arr: &[T], target: &T) -> Option<usize> {
     search(arr, target, true).ok()
 }
 
+/// Searches for the index where target can be inserted into a sorted array such
+/// that the array remains sorted in O(log n) time.
+///
+/// Note:
+///
+///   1) If the target already exists in the array, the index of the target will
+///      be returned (not index_of_target + 1, which also keeps the array
+///      sorted). If multiple duplicates of target exist in the array, then one
+///      of their indices will be returned (it can be any of them, there are no
+///      guarantees that it will be the first or last one etc ...)
+///   2) If the target is greater than all entries in the array, then the index
+///      of insertion would be arr.len(), which is of course our of bounds for
+///      the array.
 pub fn binary_search_insert_index<T: Ord>(arr: &[T], target: &T) -> usize {
     search(arr, target, false).unwrap_or_else(|x| x)
 }
 
+/// Same as binary_search_insert_index, but for reverse ordered arrays
+/// (descending order).
 pub fn binary_search_insert_index_rev<T: Ord>(arr: &[T], target: &T) -> usize {
     search(arr, target, true).unwrap_or_else(|x| x)
 }
