@@ -79,28 +79,29 @@ impl<K: KeyT, V> BinarySearchTree<K, V> {
     }
 
     fn delete(&mut self, key: K) -> Option<Node<K, V>> {
-        fn visit<K: KeyT, V>(mut link: Link<K, V>, key: K) -> (Link<K, V>, Option<Node<K, V>>) {
-            match link.take() {
-                None => (None, None),
-                Some(mut node) => {
-                    if key == node.key {
-                        match node.right.take() {
-                            None => (node.left.take(), Some(*node)),
-                            Some(right) => {
-                                let (_, successor) = find_successor(*right);
-                                (Some(Box::new(successor)), Some(*node))
-                            }
-                        }
-                    } else if key > node.key {
-                        let deleted_node;
-                        (node.right, deleted_node) = visit(node.right, key);
-                        (Some(node), deleted_node)
-                    } else {
-                        let deleted_node;
-                        (node.left, deleted_node) = visit(node.left, key);
-                        (Some(node), deleted_node)
+        fn visit<K: KeyT, V>(mut node: Node<K, V>, key: K) -> (Link<K, V>, Option<Node<K, V>>) {
+            if key == node.key {
+                match node.right.take() {
+                    None => (node.left.take(), Some(node)),
+                    Some(right) => {
+                        let (right, mut successor) = find_successor(*right);
+                        successor.left = node.left.take();
+                        successor.right = right;
+                        (Some(Box::new(successor)), Some(node))
                     }
                 }
+            } else if key > node.key {
+                let mut deleted_node = None;
+                if let Some(right) = node.right {
+                    (node.right, deleted_node) = visit(*right, key);
+                };
+                (Some(Box::new(node)), deleted_node)
+            } else {
+                let mut deleted_node = None;
+                if let Some(left) = node.left {
+                    (node.left, deleted_node) = visit(*left, key);
+                };
+                (Some(Box::new(node)), deleted_node)
             }
         }
 
@@ -117,11 +118,15 @@ impl<K: KeyT, V> BinarySearchTree<K, V> {
             }
         }
 
-        let deleted_node;
-        let root = self.root.take();
-        (self.root, deleted_node) = visit(root, key);
-        self.size -= 1;
-        deleted_node
+        match self.root.take() {
+            None => None,
+            Some(root) => {
+                let deleted_node;
+                (self.root, deleted_node) = visit(*root, key);
+                self.size -= 1;
+                deleted_node
+            }
+        }
     }
 }
 

@@ -1,11 +1,13 @@
 mod binary_search_tree;
 mod ordered_arr;
 
+use std::fmt::Debug;
+
 pub use binary_search_tree::BinarySearchTree;
 pub use ordered_arr::OrderedArrST;
 
-pub trait KeyT: Ord + Clone + Copy {}
-impl<T: Ord + Clone + Copy> KeyT for T {}
+pub trait KeyT: Ord + Clone + Copy + Debug {}
+impl<T: Ord + Clone + Copy + Debug> KeyT for T {}
 
 pub trait SymbolTable<K: KeyT, V>
 where
@@ -61,10 +63,12 @@ mod tests {
         assert_eq!(iter.next(), Some(&"b"));
         assert_eq!(iter.next(), Some(&"banana"));
         assert_eq!(iter.next(), Some(&"dog"));
+        assert_eq!(iter.next(), None);
     }
 
     #[test]
     fn test_binary_search_tree() {
+        // test 1
         let mut st = BinarySearchTree::new();
         assert_eq!(st.is_empty(), true);
         assert_eq!(st.size(), 0);
@@ -95,5 +99,44 @@ mod tests {
         assert_eq!(iter.next(), Some(&"apple"));
         assert_eq!(iter.next(), Some(&"banana"));
         assert_eq!(iter.next(), Some(&"dog"));
+        assert_eq!(iter.next(), None);
+
+        // test 2
+        let mut st = BinarySearchTree::new();
+        st.put(5, -5).unwrap();
+        st.put(2, -2).unwrap();
+        st.put(3, 100000).unwrap();
+        st.put(1, -1).unwrap();
+        st.put(0, 0).unwrap();
+        st.put(10, -10).unwrap();
+        st.put(11, -11).unwrap();
+        st.put(12, -12).unwrap();
+        st.put(8, -8).unwrap();
+        st.put(7, -7).unwrap();
+        st.put(3, -3).unwrap();
+        st.put(4, -4).unwrap();
+        st.put(6, -6).unwrap();
+        st.put(9, -9).unwrap();
+
+        for i in 0..=12 {
+            assert_eq!(st.get(i), Some(&-i));
+        }
+
+        assert!(st.pop(12).is_some());
+        assert!(st.pop(5).is_some());
+        assert!(st.pop(8).is_some());
+        assert!(st.pop(0).is_some());
+        assert!(st.pop(3).is_some());
+
+        let mut iter = (&st).into_iter();
+        assert_eq!(iter.next(), Some(&1));
+        assert_eq!(iter.next(), Some(&2));
+        assert_eq!(iter.next(), Some(&4));
+        assert_eq!(iter.next(), Some(&6));
+        assert_eq!(iter.next(), Some(&7));
+        assert_eq!(iter.next(), Some(&9));
+        assert_eq!(iter.next(), Some(&10));
+        assert_eq!(iter.next(), Some(&11));
+        assert_eq!(iter.next(), None);
     }
 }
