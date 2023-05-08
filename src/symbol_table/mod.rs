@@ -44,6 +44,7 @@ mod tests {
         assert_eq!(st.pop("cat"), Some(-3));
         assert_eq!(st.get("cat"), None);
         assert_eq!(st.pop("cat"), None);
+        assert_eq!(st.get("dog"), Some(&0));
 
         st.put("apple", 20).unwrap();
         assert_eq!(st.get("apple"), Some(&20));
@@ -84,6 +85,7 @@ mod tests {
         assert_eq!(st.pop("cat"), Some(-3));
         assert_eq!(st.get("cat"), None);
         assert_eq!(st.pop("cat"), None);
+        assert_eq!(st.get("dog"), Some(&0));
 
         st.put("apple", 20).unwrap();
         assert_eq!(st.get("apple"), Some(&20));

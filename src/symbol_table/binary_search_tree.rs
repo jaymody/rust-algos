@@ -82,12 +82,12 @@ impl<K: KeyT, V> BinarySearchTree<K, V> {
                 None => (None, None),
                 Some(mut node) => {
                     if key == node.key {
-                        if node.right.is_none() {
-                            (node.left.take(), Some(*node))
-                        } else {
-                            let successor;
-                            (node.right, successor) = find_successor(node.right);
-                            (successor, Some(*node))
+                        match node.right.take() {
+                            None => (node.left.take(), Some(*node)),
+                            Some(right) => {
+                                let (_, successor) = find_successor(*right);
+                                (Some(Box::new(successor)), Some(*node))
+                            }
                         }
                     } else if key > node.key {
                         let deleted_node;
@@ -103,14 +103,14 @@ impl<K: KeyT, V> BinarySearchTree<K, V> {
         }
 
         fn find_successor<K: Ord + Copy + Clone, V>(
-            mut link: Link<K, V>,
-        ) -> (Link<K, V>, Link<K, V>) {
-            match link.take() {
-                None => (None, None),
-                Some(mut node) => {
+            mut node: Node<K, V>,
+        ) -> (Link<K, V>, Node<K, V>) {
+            match node.left {
+                None => (None, node),
+                Some(left) => {
                     let successor;
-                    (node.left, successor) = find_successor(node.left);
-                    (Some(node), successor)
+                    (node.left, successor) = find_successor(*left);
+                    (Some(Box::new(node)), successor)
                 }
             }
         }
