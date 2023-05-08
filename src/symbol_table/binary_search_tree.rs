@@ -13,17 +13,16 @@ pub struct Node<K, V> {
     right: Link<K, V>,
 }
 
-impl<K, V> Node<K, V> {
-    fn new(key: K, val: V) -> Self {
-        Node {
-            key: key,
-            val: val,
-            left: None,
-            right: None,
-        }
-    }
-}
-
+/// A binary search tree that stores key-value pairs.
+///
+/// A binary search tree is a binary tree with the constraint that for any
+/// given node in the tree, all nodes in the right subtree are >= to it, and all
+/// nodes in the left subtree are <= to it. If the tree is balanced, searching
+/// and inserting into the tree basically corresponds to binary search, and is
+/// an O(log n) operation. If the tree is not balanced, these operations become
+/// O(n).
+///
+/// See: https://algs4.cs.princeton.edu/32bst/
 pub struct BinarySearchTree<K: KeyT, V> {
     root: Link<K, V>,
     size: usize,
@@ -131,15 +130,54 @@ impl<K: KeyT, V> BinarySearchTree<K, V> {
 }
 
 impl<K: KeyT, V> SymbolTable<K, V> for BinarySearchTree<K, V> {
+    /// Add (or update) the key-value pair.
+    ///
+    /// ### Implementation
+    /// Traverse the tree until we find a match (update the value) or we reach
+    /// a null node (replace the null node with a new entry). Put is O(log n)
+    /// on average (if the tree is roughly balanced) and O(n) in the worst case
+    /// (if the tree is very imbalanced).
     fn put(&mut self, key: K, val: V) -> Result<(), String> {
-        self.insert(Node::new(key, val));
+        self.insert(Node {
+            key: key,
+            val: val,
+            left: None,
+            right: None,
+        });
         Ok(())
     }
 
+    /// Get a reference to the value for the associated key (None if the key
+    /// does not exist).
+    ///
+    /// ### Implementation
+    /// Traverse the tree until we find a match (in which case, return a
+    /// reference to the value) or we hit null (in which case, the key does
+    /// not exist so we return None). Get is O(log n) on average (if the tree is
+    /// roughly balanced) and O(n) in the worst case (if the tree is very
+    /// imbalanced).
     fn get(&self, key: K) -> Option<&V> {
         Some(&self.search(key)?.val)
     }
 
+    /// Remove the entry that matches the key, and return it's value (return
+    /// None if the key does not exist).
+    ///
+    /// ### Implementation
+    /// Traverse the tree until either we find a match, or we hit a null node.
+    /// If we hit a null node, we simply return None since the key does not
+    /// exist in our tree. If we find a match, we either:
+    ///
+    ///   1) replace it with the left node, if a right node does not exist
+    ///   2) if a right node exists, we replace it with it's "successor"
+    ///
+    /// The successor is the next node in the tree (by value), as if you were
+    /// traversing the tree in sorted order. This corresponds to the leftmost
+    /// node in the right subtree. See the "delete" section in:
+    /// https://algs4.cs.princeton.edu/32bst/
+    ///
+    /// Delete is O(log n) on average (if the tree is roughly balanced) and O(n)
+    /// in the worst case (if the tree is very imbalanced).
     fn pop(&mut self, key: K) -> Option<V> {
         Some(self.delete(key)?.val)
     }

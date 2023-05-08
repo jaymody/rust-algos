@@ -1,15 +1,3 @@
-/*
-Keys and values are stored in fixed length arrays, sorted in the ordering of
-the keys. As such, getting an item is an O(log n) operation.
-
-Putting and popping an item are at worst O(n), and at best O(log n). We first
-find the index we need to insert the key/value pair (which we can find via
-binary search), and then we need to either update it and we are done, or we need
-to insert a new entry in which case we'll need to shift the array (which if the
-position to insert is at the start, is an O(n) operation, if at the end, is
-an O(1) operation).
-*/
-
 use crate::{
     search::{binary_search, binary_search_insert_index},
     utils::{insert_and_shift, pop_and_shift},
@@ -17,6 +5,18 @@ use crate::{
 
 use super::{KeyT, SymbolTable};
 
+/// A symbol table where keys and values are stored in fixed length arrays,
+/// sorted in the ordering of the keys.
+///
+/// Since the entries are sorted, we leverage binary search to find an entry
+/// in O(log n) time.
+///
+/// As such, the get operation is runs in  O(log n) time.
+///
+/// Insertion and deletion remain O(n) however. Even though you can find
+/// the index of insertion/deletion in O(log n) time, you need to shift all the
+/// entries to the right for insertion and to the left for deletion, which is
+/// an O(n) operation.
 pub struct OrderedArrST<K: KeyT, V, const CAPACITY: usize> {
     keys: [Option<K>; CAPACITY],
     vals: [Option<V>; CAPACITY],
@@ -37,6 +37,18 @@ impl<K: KeyT, V, const CAPACITY: usize> OrderedArrST<K, V, CAPACITY> {
 }
 
 impl<K: KeyT, V, const CAPACITY: usize> SymbolTable<K, V> for OrderedArrST<K, V, CAPACITY> {
+    /// Add (or update) the key-value pair.
+    ///
+    /// ### Implementation
+    /// We use binary search and either:
+    ///
+    ///   1) Update: The key already exists and binary search finds it in
+    ///      O(log n) time and we simply update the value.
+    ///   2) Insert: The key does not exist and binary search finds at which
+    ///      position we need to insert the new entry to keep the arrays sorted.
+    ///      While finding the insertion index is an O(log n) operation, we need
+    ///      to shift all the position to the right by one to make space for the
+    ///      insertion, which is an O(n) operation.
     fn put(&mut self, key: K, val: V) -> Result<(), String> {
         let key = Some(key);
         let val = Some(val);
@@ -56,11 +68,28 @@ impl<K: KeyT, V, const CAPACITY: usize> SymbolTable<K, V> for OrderedArrST<K, V,
         Ok(())
     }
 
+    /// Get a reference to the value for the associated key (None if the key
+    /// does not exist).
+    ///
+    /// ### Implementation
+    /// We perform binary search on the array. If there is a hit, we return it,
+    /// else the key does not exist and we return None.
     fn get(&self, key: K) -> Option<&V> {
         let i = binary_search(&self.keys[..self.size], &Some(key))?;
         self.vals[i].as_ref()
     }
 
+    /// Remove the entry that matches the key, and return it's value (return
+    /// None if the key does not exist).
+    ///
+    /// ### Implementation
+    /// We perform binary search and either:
+    ///
+    ///   1) The key does not exist, and we return None.
+    ///   2) The key does exist and we find it's index. In this case, we need
+    ///      to delete the entry from the array and shift the values to the left
+    ///      by 1 to fill the vacant position. While finding the index is an
+    ///      O(log n) operation, shifting the values is an O(n) operation.
     fn pop(&mut self, key: K) -> Option<V> {
         let i = binary_search(&self.keys[..self.size], &Some(key))?;
         self.size -= 1;
