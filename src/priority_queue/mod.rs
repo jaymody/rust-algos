@@ -6,6 +6,9 @@ pub use heap::PriorityQueueBinaryHeap;
 pub use ordered_arr::PriorityQueueOrderedArr;
 pub use unordered_arr::PriorityQueueUnorderedArr;
 
+/// Priority queues.
+///
+/// Popping and peeking returns the minimum value in the queue.
 pub trait PriorityQueue<T: Ord> {
     fn push(&mut self, item: T) -> Result<(), String>;
     fn pop(&mut self) -> Option<T>;

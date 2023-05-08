@@ -1,22 +1,12 @@
-/*
-The approach used here is to keep a fixed length arr with items in reverse
-sorted order (descending sorted) and a value that tracks the current number
-of items.
-
-Pushing to the queue requires O(n) time. We first find the position the item
-belongs (which we can do using binary search since the array is sorted) which is
-O(log n) time, but then we need to shift the rest of the items, which is in
-the worst case an O(n) operation (i.e. if the item needs to be inserted at the
-start of the array).
-
-Peeking and popping require O(1) time, since the array is sorted, we simply
-retrieve the last entry.
-*/
-
 use crate::{search::binary_search_insert_index_rev, utils::insert_and_shift};
 
 use super::PriorityQueue;
 
+/// An ordered fixed length array implementation for a priority queue.
+///
+/// The approach here is to keep a fixed length arr with items in reverse
+/// sorted order (descending sorted). Sorting enables O(1) popping/peeking, at
+/// the cost of O(n) insertions.
 pub struct PriorityQueueOrderedArr<T: Ord, const CAPACITY: usize> {
     pub arr: [Option<T>; CAPACITY],
     size: usize,
@@ -34,6 +24,13 @@ impl<T: Ord, const CAPACITY: usize> PriorityQueueOrderedArr<T, CAPACITY> {
 }
 
 impl<T: Ord, const CAPACITY: usize> PriorityQueue<T> for PriorityQueueOrderedArr<T, CAPACITY> {
+    /// Push an item to the queue.
+    ///
+    /// ### Implementation
+    /// Pushing to the queue corresponds to finding the position of insertion
+    /// that keeps the array sorted (which we can do in O(log n) time via
+    /// binary search) and then shifting the values to the right of it by 1 to
+    /// make space for it (which requires O(n) time).
     fn push(&mut self, item: T) -> Result<(), String> {
         if self.size >= CAPACITY {
             return Err("capacity full".to_string());
@@ -46,6 +43,11 @@ impl<T: Ord, const CAPACITY: usize> PriorityQueue<T> for PriorityQueueOrderedArr
         Ok(())
     }
 
+    /// Pop an item from the queue (return None if the queue is empty).
+    ///
+    /// ### Implementation
+    /// Since the array is reverse sorted, we simply remove and return the last
+    /// entry in our array, which is an O(1) operation.
     fn pop(&mut self) -> Option<T> {
         if self.size == 0 {
             return None;
@@ -54,6 +56,11 @@ impl<T: Ord, const CAPACITY: usize> PriorityQueue<T> for PriorityQueueOrderedArr
         self.arr[self.size].take()
     }
 
+    /// Peek at the next item in the queue (return None if the queue is empty).
+    ///
+    /// ### Implementation
+    /// Since the array is reverse sorted, we simply return a reference to the
+    /// last entry in the array.
     fn peek(&self) -> Option<&T> {
         if self.size == 0 {
             return None;
