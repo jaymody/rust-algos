@@ -4,7 +4,9 @@ mod ordered_arr;
 pub use binary_search_tree::BinarySearchTree;
 pub use ordered_arr::OrderedArrST;
 
-pub trait SymbolTable<K: Ord + Clone + Copy, V> // for<'a> &'a Self: IntoIterator<Item = &'a K>,
+pub trait SymbolTable<K: Ord + Clone + Copy, V>
+where
+    for<'a> &'a Self: IntoIterator<Item = &'a K>,
 {
     fn put(&mut self, key: K, val: V) -> Result<(), String>;
     fn get(&self, key: K) -> Option<&V>;
