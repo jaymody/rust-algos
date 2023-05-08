@@ -1,8 +1,8 @@
-mod stack_fixed_arr;
-mod stack_linked_list;
+mod fixed_arr;
+mod linked_list;
 
-pub use stack_fixed_arr::StackFixedArray;
-pub use stack_linked_list::StackLinkedList;
+pub use fixed_arr::StackFixedArray;
+pub use linked_list::StackLinkedList;
 
 /// A last-in-first-out (LIFO) stack.
 pub trait Stack<T> {

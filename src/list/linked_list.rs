@@ -21,15 +21,15 @@ impl<T> Node<T> {
     }
 }
 
-pub struct DoublyLinkedList<T> {
+pub struct LinkedList<T> {
     head: Link<T>,
     tail: Link<T>,
     size: usize,
 }
 
-impl<T> DoublyLinkedList<T> {
+impl<T> LinkedList<T> {
     pub fn new() -> Self {
-        DoublyLinkedList {
+        LinkedList {
             head: null_mut(),
             tail: null_mut(),
             size: 0,
@@ -38,7 +38,7 @@ impl<T> DoublyLinkedList<T> {
 }
 
 /* impl List trait */
-impl<T> List<T> for DoublyLinkedList<T> {
+impl<T> List<T> for LinkedList<T> {
     fn push_front(&mut self, item: T) {
         unsafe {
             let mut new_head = Node::new_link(item);
@@ -112,7 +112,7 @@ impl<T> List<T> for DoublyLinkedList<T> {
 
 /* impl IntoIterator<Item = T> */
 pub struct IntoIter<T> {
-    list: DoublyLinkedList<T>,
+    list: LinkedList<T>,
 }
 
 impl<T> Iterator for IntoIter<T> {
@@ -123,7 +123,7 @@ impl<T> Iterator for IntoIter<T> {
     }
 }
 
-impl<T> IntoIterator for DoublyLinkedList<T> {
+impl<T> IntoIterator for LinkedList<T> {
     type Item = T;
     type IntoIter = IntoIter<Self::Item>;
 
@@ -154,7 +154,7 @@ impl<'a, T> Iterator for Iter<'a, T> {
     }
 }
 
-impl<'a, T> IntoIterator for &'a DoublyLinkedList<T> {
+impl<'a, T> IntoIterator for &'a LinkedList<T> {
     type Item = &'a T;
     type IntoIter = Iter<'a, T>;
 
@@ -188,7 +188,7 @@ impl<'a, T> Iterator for IterMut<'a, T> {
     }
 }
 
-impl<'a, T> IntoIterator for &'a mut DoublyLinkedList<T> {
+impl<'a, T> IntoIterator for &'a mut LinkedList<T> {
     type Item = &'a mut T;
     type IntoIter = IterMut<'a, T>;
 

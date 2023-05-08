@@ -1,6 +1,6 @@
-mod doubly;
+mod linked_list;
 
-pub use doubly::DoublyLinkedList;
+pub use linked_list::LinkedList;
 
 /// List data structure that can hold a variable number of items.
 ///
@@ -37,7 +37,7 @@ mod tests {
 
     #[test]
     fn test_doubly() {
-        let mut list = DoublyLinkedList::new();
+        let mut list = LinkedList::new();
         assert_eq!(list.pop_front(), None);
         assert_eq!(list.is_empty(), true);
         assert_eq!(list.size(), 0);

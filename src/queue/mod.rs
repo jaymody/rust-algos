@@ -1,6 +1,6 @@
-mod queue_linked_list;
+mod linked_list;
 
-pub use queue_linked_list::QueueLinkedList;
+pub use linked_list::QueueLinkedList;
 
 /// A first-in-first-out (FIFO) queue.
 pub trait Queue<T> {
