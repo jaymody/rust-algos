@@ -21,6 +21,11 @@ impl<T> Node<T> {
     }
 }
 
+/// A doubly linked list.
+///
+/// Since rust is safe by default, and only one mutable reference can exist
+/// at any given point in time, this implementation requires unsafe rust via
+/// raw pointers *mut Node<T> for prev, next, head, and tail.
 pub struct LinkedList<T> {
     head: Link<T>,
     tail: Link<T>,
