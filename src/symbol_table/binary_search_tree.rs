@@ -36,88 +36,99 @@ impl<K: Ord + Clone + Copy, V> BinarySearchTree<K, V> {
     }
 
     fn insert(&mut self, node_to_insert: Node<K, V>) {
+        fn visit<K: Ord + Clone + Copy, V>(
+            link: &mut Link<K, V>,
+            node_to_insert: Node<K, V>,
+        ) -> Link<K, V> {
+            match link.take() {
+                None => Some(Box::new(node_to_insert)),
+                Some(mut node) => {
+                    if node_to_insert.key == node.key {
+                        node.val = node_to_insert.val;
+                    } else if node_to_insert.key > node.key {
+                        node.right = visit(&mut node.right, node_to_insert);
+                    } else {
+                        node.left = visit(&mut node.left, node_to_insert);
+                    }
+                    Some(node)
+                }
+            }
+        }
+
         let mut root = self.root.take();
-        self.root = self._insert(&mut root, node_to_insert);
+        self.root = visit(&mut root, node_to_insert);
         self.size += 1;
     }
 
-    fn _insert(&mut self, link: &mut Link<K, V>, node_to_insert: Node<K, V>) -> Link<K, V> {
-        match link.take() {
-            None => Some(Box::new(node_to_insert)),
-            Some(mut node) => {
-                if node_to_insert.key == node.key {
-                    node.val = node_to_insert.val;
-                } else if node_to_insert.key > node.key {
-                    node.right = self._insert(&mut node.right, node_to_insert);
-                } else {
-                    node.left = self._insert(&mut node.left, node_to_insert);
-                }
-                Some(node)
-            }
-        }
-    }
-
     fn search(&self, key: K) -> Option<&Node<K, V>> {
-        self._search(&self.root, key)
-    }
-
-    fn _search<'a>(&self, link: &'a Link<K, V>, key: K) -> Option<&'a Node<K, V>> {
-        match link {
-            None => None,
-            Some(node) => {
-                if key == node.key {
-                    Some(node.deref())
-                } else if key > node.key {
-                    self._search(&node.right, key)
-                } else {
-                    self._search(&node.left, key)
+        fn visit<'a, K: Ord + Clone + Copy, V>(
+            link: &'a Link<K, V>,
+            key: K,
+        ) -> Option<&'a Node<K, V>> {
+            match link {
+                None => None,
+                Some(node) => {
+                    if key == node.key {
+                        Some(node.deref())
+                    } else if key > node.key {
+                        visit(&node.right, key)
+                    } else {
+                        visit(&node.left, key)
+                    }
                 }
             }
         }
+
+        visit(&self.root, key)
     }
 
     fn delete(&mut self, key: K) -> Option<Node<K, V>> {
-        let deleted_node;
-        let root = self.root.take();
-        (self.root, deleted_node) = self._delete(root, key);
-        self.size -= 1;
-        deleted_node
-    }
-
-    fn _delete(&mut self, mut link: Link<K, V>, key: K) -> (Link<K, V>, Option<Node<K, V>>) {
-        match link.take() {
-            None => (None, None),
-            Some(mut node) => {
-                if key == node.key {
-                    if node.right.is_none() {
-                        (node.left.take(), Some(*node))
+        fn visit<K: Ord + Clone + Copy, V>(
+            mut link: Link<K, V>,
+            key: K,
+        ) -> (Link<K, V>, Option<Node<K, V>>) {
+            match link.take() {
+                None => (None, None),
+                Some(mut node) => {
+                    if key == node.key {
+                        if node.right.is_none() {
+                            (node.left.take(), Some(*node))
+                        } else {
+                            let successor;
+                            (node.right, successor) = find_successor(node.right);
+                            (successor, Some(*node))
+                        }
+                    } else if key > node.key {
+                        let deleted_node;
+                        (node.right, deleted_node) = visit(node.right, key);
+                        (Some(node), deleted_node)
                     } else {
-                        let successor;
-                        (node.right, successor) = self.find_successor(node.right);
-                        (successor, Some(*node))
+                        let deleted_node;
+                        (node.left, deleted_node) = visit(node.left, key);
+                        (Some(node), deleted_node)
                     }
-                } else if key > node.key {
-                    let deleted_node;
-                    (node.right, deleted_node) = self._delete(node.right, key);
-                    (Some(node), deleted_node)
-                } else {
-                    let deleted_node;
-                    (node.left, deleted_node) = self._delete(node.left, key);
-                    (Some(node), deleted_node)
                 }
             }
         }
-    }
 
-    fn find_successor(&mut self, mut link: Link<K, V>) -> (Link<K, V>, Link<K, V>) {
-        match link.take() {
-            None => (None, None),
-            Some(mut node) => {
-                let successor;
-                (node.left, successor) = self.find_successor(node.left);
-                (Some(node), successor)
+        fn find_successor<K: Ord + Copy + Clone, V>(
+            mut link: Link<K, V>,
+        ) -> (Link<K, V>, Link<K, V>) {
+            match link.take() {
+                None => (None, None),
+                Some(mut node) => {
+                    let successor;
+                    (node.left, successor) = find_successor(node.left);
+                    (Some(node), successor)
+                }
             }
         }
+
+        let deleted_node;
+        let root = self.root.take();
+        (self.root, deleted_node) = visit(root, key);
+        self.size -= 1;
+        deleted_node
     }
 }
 
