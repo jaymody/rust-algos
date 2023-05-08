@@ -1,10 +1,10 @@
 pub fn merge_sort<T: Ord + Clone>(arr: &mut [T]) {
-    let mut aux = arr.to_vec();
-    sort(arr, &mut aux);
+    let aux = &mut arr.to_vec()[..];
+    sort(arr, aux);
 }
 
 fn sort<T: Ord + Clone>(arr: &mut [T], aux: &mut [T]) {
-    if aux.len() > 1 {
+    if arr.len() > 1 {
         let m = arr.len() / 2;
         sort(&mut arr[..m], &mut aux[..m]);
         sort(&mut arr[m..], &mut aux[m..]);
