@@ -1,7 +1,5 @@
 use std::{marker::PhantomData, ptr::null_mut};
 
-use super::List;
-
 /* types and structs */
 type Link<T> = *mut Node<T>;
 
@@ -29,7 +27,7 @@ impl<T> Node<T> {
 pub struct LinkedList<T> {
     head: Link<T>,
     tail: Link<T>,
-    size: usize,
+    len: usize,
 }
 
 impl<T> LinkedList<T> {
@@ -37,14 +35,11 @@ impl<T> LinkedList<T> {
         LinkedList {
             head: null_mut(),
             tail: null_mut(),
-            size: 0,
+            len: 0,
         }
     }
-}
 
-/* impl List trait */
-impl<T> List<T> for LinkedList<T> {
-    fn push_front(&mut self, item: T) {
+    pub fn push_front(&mut self, item: T) {
         unsafe {
             let mut new_head = Node::new_link(item);
 
@@ -56,11 +51,11 @@ impl<T> List<T> for LinkedList<T> {
             }
 
             self.head = new_head;
-            self.size += 1;
+            self.len += 1;
         }
     }
 
-    fn push_back(&mut self, item: T) {
+    pub fn push_back(&mut self, item: T) {
         unsafe {
             let new_tail = Node::new_link(item);
 
@@ -72,46 +67,46 @@ impl<T> List<T> for LinkedList<T> {
             }
 
             self.tail = new_tail;
-            self.size += 1;
+            self.len += 1;
         }
     }
 
-    fn pop_front(&mut self) -> Option<T> {
+    pub fn pop_front(&mut self) -> Option<T> {
         unsafe {
             (!self.is_empty()).then(|| {
                 let old_head = self.head;
                 self.head = (*old_head).next;
-                self.size -= 1;
+                self.len -= 1;
                 Box::from_raw(old_head).item
             })
         }
     }
 
-    fn pop_back(&mut self) -> Option<T> {
+    pub fn pop_back(&mut self) -> Option<T> {
         unsafe {
             (!self.is_empty()).then(|| {
                 let old_tail = self.tail;
                 self.tail = (*old_tail).prev;
-                self.size -= 1;
+                self.len -= 1;
                 Box::from_raw(old_tail).item
             })
         }
     }
 
-    fn peek_front(&self) -> Option<&T> {
+    pub fn peek_front(&self) -> Option<&T> {
         unsafe { (!self.is_empty()).then(|| &(*self.head).item) }
     }
 
-    fn peek_back(&self) -> Option<&T> {
+    pub fn peek_back(&self) -> Option<&T> {
         unsafe { (!self.is_empty()).then(|| &(*self.tail).item) }
     }
 
-    fn is_empty(&self) -> bool {
-        self.size == 0
+    pub fn is_empty(&self) -> bool {
+        self.len == 0
     }
 
-    fn size(&self) -> usize {
-        self.size
+    pub fn len(&self) -> usize {
+        self.len
     }
 }
 
@@ -201,6 +196,91 @@ impl<'a, T> IntoIterator for &'a mut LinkedList<T> {
         IterMut {
             current: self.head,
             _marker: PhantomData,
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test() {
+        let mut list = LinkedList::new();
+        assert_eq!(list.pop_front(), None);
+        assert_eq!(list.is_empty(), true);
+        assert_eq!(list.len(), 0);
+
+        // push front pop front
+        list.push_front(1);
+        list.push_front(2);
+        assert_eq!(list.len(), 2);
+        assert_eq!(list.is_empty(), false);
+        list.push_front(3);
+
+        assert_eq!(list.pop_front(), Some(3));
+        assert_eq!(list.pop_front(), Some(2));
+        assert_eq!(list.len(), 1);
+        assert_eq!(list.pop_front(), Some(1));
+        assert_eq!(list.pop_front(), None);
+        assert_eq!(list.len(), 0);
+        assert_eq!(list.is_empty(), true);
+
+        // push back pop front
+        list.push_back(1);
+        list.push_back(2);
+        list.push_back(3);
+
+        assert_eq!(list.pop_front(), Some(1));
+        assert_eq!(list.pop_front(), Some(2));
+        assert_eq!(list.pop_front(), Some(3));
+        assert_eq!(list.pop_front(), None);
+
+        // push front pop back
+        list.push_front(1);
+        list.push_front(2);
+        list.push_front(3);
+
+        assert_eq!(list.pop_back(), Some(1));
+        assert_eq!(list.pop_back(), Some(2));
+        assert_eq!(list.pop_back(), Some(3));
+        assert_eq!(list.pop_back(), None);
+
+        // push back pop back
+        list.push_back(1);
+        list.push_back(2);
+        list.push_back(3);
+
+        assert_eq!(list.pop_back(), Some(3));
+        assert_eq!(list.pop_back(), Some(2));
+        assert_eq!(list.pop_back(), Some(1));
+        assert_eq!(list.pop_back(), None);
+
+        // peek front and back
+        assert_eq!(list.peek_front(), None);
+        assert_eq!(list.peek_back(), None);
+
+        list.push_back(1);
+        assert_eq!(list.peek_front(), Some(&1));
+        assert_eq!(list.peek_back(), Some(&1));
+
+        list.push_back(2);
+        list.push_back(3);
+
+        assert_eq!(list.peek_front(), Some(&1));
+        assert_eq!(list.peek_back(), Some(&3));
+
+        // test iters
+        for x in &mut list {
+            *x += 10;
+        }
+
+        for (i, x) in (&list).into_iter().enumerate() {
+            assert_eq!(x, &(i + 11))
+        }
+
+        for (i, x) in list.into_iter().enumerate() {
+            assert_eq!(x, i + 11)
         }
     }
 }
