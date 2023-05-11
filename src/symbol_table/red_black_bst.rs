@@ -239,37 +239,37 @@ impl<K: KeyT, V> SymbolTable<K, V> for RedBlackBST<K, V> {
     }
 }
 
-impl<K: KeyT + Debug, V> Display for RedBlackBST<K, V> {
+impl<K: KeyT + Display, V> Display for RedBlackBST<K, V> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         /// implementation based on: https://stackoverflow.com/a/42449385/11070463
-        fn visit<K: KeyT + Debug, V>(
+        fn get_suffix(s: &str, prefix: &str, is_red: bool) -> String {
+            let mut s = s.to_string();
+            if is_red {
+                s = format!("\x1b[01;31m{}\x1b[00m", s);
+            }
+            format!("{}{}", prefix.clone(), s)
+        }
+
+        fn visit<K: KeyT + Display, V>(
             link: &Link<K, V>,
             prefix: String,
             output: &mut String,
             is_right: bool,
         ) {
             if let Some(node) = link {
-                let mut base = if is_right {
-                    "|-- ".to_string()
-                } else {
-                    "\\-- ".to_string()
-                };
-                if node.is_red {
-                    base = format!("\x1b[01;31m{}\x1b[00m", base);
-                }
-                let data_str = format!("{}{}{:?}\n", prefix.clone(), base, node.key);
+                let out_str = format!(
+                    "{}{}\n",
+                    get_suffix(
+                        if is_right { "|-- " } else { "\\-- " },
+                        &prefix,
+                        node.is_red,
+                    ),
+                    node.key
+                );
+                let new_prefix =
+                    get_suffix(if is_right { "|   " } else { "    " }, &prefix, node.is_red);
 
-                let mut base = if is_right {
-                    "|   ".to_string()
-                } else {
-                    "    ".to_string()
-                };
-                if node.is_red {
-                    base = format!("\x1b[01;31m{}\x1b[00m", base);
-                }
-                let new_prefix = format!("{}{}", prefix.clone(), base);
-
-                output.push_str(&data_str);
+                output.push_str(&out_str);
                 visit(&node.right, new_prefix.clone(), output, true);
                 visit(&node.left, new_prefix.clone(), output, false);
             }
