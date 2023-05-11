@@ -1,4 +1,5 @@
 use std::{
+    cmp::Ordering,
     fmt::{format, Debug, Display},
     ops::Deref,
 };
@@ -144,37 +145,23 @@ impl<K: KeyT, V> RedBlackBST<K, V> {
         match link.take() {
             None => Some(Box::new(node_to_insert)),
             Some(mut node) => {
-                if node_to_insert.key == node.key {
-                    node.val = node_to_insert.val;
-                } else if node_to_insert.key > node.key {
-                    node.right = self.insert(&mut node.right, node_to_insert);
-                } else {
-                    node.left = self.insert(&mut node.left, node_to_insert);
+                match node_to_insert.key.cmp(&node.key) {
+                    Ordering::Equal => node.val = node_to_insert.val,
+                    Ordering::Less => node.left = self.insert(&mut node.left, node_to_insert),
+                    Ordering::Greater => node.right = self.insert(&mut node.right, node_to_insert),
                 }
 
-                if node.as_ref().left.is_some() && node.as_ref().left.as_ref().unwrap().is_red {
-                    if node.as_ref().right.as_ref().is_some()
-                        && node.as_ref().right.as_ref().unwrap().is_red
-                    {
-                        self.flip_colors(*node)
-                    } else if node.as_ref().left.as_ref().unwrap().left.as_ref().is_some()
-                        && node
-                            .as_ref()
-                            .left
-                            .as_ref()
-                            .unwrap()
-                            .left
-                            .as_ref()
-                            .unwrap()
-                            .is_red
-                    {
-                        self.rotate_right(*node)
-                    } else {
-                        Some(node)
-                    }
-                } else if node.as_ref().right.as_ref().is_some()
-                    && node.as_ref().right.as_ref().unwrap().is_red
-                {
+                let left = (&node).left.as_ref();
+                let right = (&node).right.as_ref();
+                let left_left = left.map_or(None, |n| n.left.as_ref());
+
+                let some_and_red = |n: Option<&Box<Node<K, V>>>| n.map_or(false, |x| x.is_red);
+
+                if some_and_red(left) && some_and_red(right) {
+                    self.flip_colors(*node)
+                } else if some_and_red(left) && some_and_red(left_left) {
+                    self.rotate_right(*node)
+                } else if some_and_red(right) {
                     self.rotate_left(*node)
                 } else {
                     Some(node)
