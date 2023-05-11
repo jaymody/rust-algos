@@ -1,8 +1,10 @@
 mod binary_search_tree;
 mod ordered_arr;
+mod red_black_bst;
 
 pub use binary_search_tree::BinarySearchTree;
 pub use ordered_arr::OrderedArrST;
+pub use red_black_bst::RedBlackBST;
 
 /// Keys must be Clone, Copy, and Ord (i.e. defines ==, =>, <=, >, <).
 /// Technically only == is needed for a regular non-ordered Symbol Table,
