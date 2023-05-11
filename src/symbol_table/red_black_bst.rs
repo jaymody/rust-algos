@@ -361,9 +361,18 @@ mod tests {
         assert_eq!(st.get("P"), Some(&9));
         assert_eq!(st.get("L"), Some(&10));
 
-        println!("{}", st);
-
-        assert!(false);
+        let mut iter = (&st).into_iter();
+        assert_eq!(iter.next(), Some(&"A"));
+        assert_eq!(iter.next(), Some(&"C"));
+        assert_eq!(iter.next(), Some(&"E"));
+        assert_eq!(iter.next(), Some(&"H"));
+        assert_eq!(iter.next(), Some(&"L"));
+        assert_eq!(iter.next(), Some(&"M"));
+        assert_eq!(iter.next(), Some(&"P"));
+        assert_eq!(iter.next(), Some(&"R"));
+        assert_eq!(iter.next(), Some(&"S"));
+        assert_eq!(iter.next(), Some(&"X"));
+        assert_eq!(iter.next(), None);
     }
 
     #[test]
@@ -397,8 +406,17 @@ mod tests {
         assert_eq!(st.get("S"), Some(&9));
         assert_eq!(st.get("X"), Some(&10));
 
-        println!("{}", st);
-
-        assert!(false);
+        let mut iter = (&st).into_iter();
+        assert_eq!(iter.next(), Some(&"A"));
+        assert_eq!(iter.next(), Some(&"C"));
+        assert_eq!(iter.next(), Some(&"E"));
+        assert_eq!(iter.next(), Some(&"H"));
+        assert_eq!(iter.next(), Some(&"L"));
+        assert_eq!(iter.next(), Some(&"M"));
+        assert_eq!(iter.next(), Some(&"P"));
+        assert_eq!(iter.next(), Some(&"R"));
+        assert_eq!(iter.next(), Some(&"S"));
+        assert_eq!(iter.next(), Some(&"X"));
+        assert_eq!(iter.next(), None);
     }
 }
