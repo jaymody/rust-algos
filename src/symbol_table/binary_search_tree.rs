@@ -73,8 +73,8 @@ impl<K: KeyT, V> BinarySearchTree<K, V> {
 
     fn delete(&mut self, key: K) -> Option<Node<K, V>> {
         fn visit<K: KeyT, V>(mut node: Node<K, V>, key: K) -> (Link<K, V>, Option<Node<K, V>>) {
-            if key == node.key {
-                match node.right.take() {
+            match key.cmp(&node.key) {
+                Ordering::Equal => match node.right.take() {
                     None => (node.left.take(), Some(node)),
                     Some(right) => {
                         let (right, mut successor) = find_successor(*right);
@@ -82,19 +82,21 @@ impl<K: KeyT, V> BinarySearchTree<K, V> {
                         successor.right = right;
                         (Some(Box::new(successor)), Some(node))
                     }
+                },
+                Ordering::Less => {
+                    let mut deleted_node = None;
+                    if let Some(left) = node.left {
+                        (node.left, deleted_node) = visit(*left, key);
+                    };
+                    (Some(Box::new(node)), deleted_node)
                 }
-            } else if key > node.key {
-                let mut deleted_node = None;
-                if let Some(right) = node.right {
-                    (node.right, deleted_node) = visit(*right, key);
-                };
-                (Some(Box::new(node)), deleted_node)
-            } else {
-                let mut deleted_node = None;
-                if let Some(left) = node.left {
-                    (node.left, deleted_node) = visit(*left, key);
-                };
-                (Some(Box::new(node)), deleted_node)
+                Ordering::Greater => {
+                    let mut deleted_node = None;
+                    if let Some(right) = node.right {
+                        (node.right, deleted_node) = visit(*right, key);
+                    };
+                    (Some(Box::new(node)), deleted_node)
+                }
             }
         }
 
