@@ -151,17 +151,21 @@ impl<K: KeyT, V> RedBlackBST<K, V> {
                 //   2) there are two left red links in a row (in which case we rotate right and flip colors)
                 //   3) there is a right red link (in which case we rotate left)
                 //
+                let some_and_red = |n: Option<&Box<Node<K, V>>>| n.map_or(false, |x| x.is_red);
+
                 let left = (&node).left.as_ref();
                 let right = (&node).right.as_ref();
                 let left_left = left.map_or(None, |n| n.left.as_ref());
 
-                let some_and_red = |n: Option<&Box<Node<K, V>>>| n.map_or(false, |x| x.is_red);
+                let left_is_red = some_and_red(left);
+                let right_is_red = some_and_red(right);
+                let left_left_is_red = some_and_red(left_left);
 
-                if some_and_red(left) && some_and_red(right) {
+                if left_is_red && right_is_red {
                     Self::flip_colors(*node)
-                } else if some_and_red(left) && some_and_red(left_left) {
+                } else if left_is_red && left_left_is_red {
                     Self::rotate_right(*node)
-                } else if some_and_red(right) {
+                } else if right_is_red {
                     Self::rotate_left(*node)
                 } else {
                     Some(node)
