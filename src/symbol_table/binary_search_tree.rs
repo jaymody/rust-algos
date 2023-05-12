@@ -1,4 +1,4 @@
-use std::ops::Deref;
+use std::{cmp::Ordering, ops::Deref};
 
 use crate::stack::{Stack, StackLinkedList};
 
@@ -41,12 +41,10 @@ impl<K: KeyT, V> BinarySearchTree<K, V> {
             match link.take() {
                 None => Some(Box::new(node_to_insert)),
                 Some(mut node) => {
-                    if node_to_insert.key == node.key {
-                        node.val = node_to_insert.val;
-                    } else if node_to_insert.key > node.key {
-                        node.right = visit(&mut node.right, node_to_insert);
-                    } else {
-                        node.left = visit(&mut node.left, node_to_insert);
+                    match node_to_insert.key.cmp(&node.key) {
+                        Ordering::Equal => node.val = node_to_insert.val,
+                        Ordering::Less => node.left = visit(&mut node.left, node_to_insert),
+                        Ordering::Greater => node.right = visit(&mut node.right, node_to_insert),
                     }
                     Some(node)
                 }
@@ -62,15 +60,11 @@ impl<K: KeyT, V> BinarySearchTree<K, V> {
         fn visit<'a, K: KeyT, V>(link: &'a Link<K, V>, key: K) -> Option<&'a Node<K, V>> {
             match link {
                 None => None,
-                Some(node) => {
-                    if key == node.key {
-                        Some(node.deref())
-                    } else if key > node.key {
-                        visit(&node.right, key)
-                    } else {
-                        visit(&node.left, key)
-                    }
-                }
+                Some(node) => match key.cmp(&node.key) {
+                    Ordering::Equal => Some(node.deref()),
+                    Ordering::Greater => visit(&node.right, key),
+                    Ordering::Less => visit(&node.left, key),
+                },
             }
         }
 

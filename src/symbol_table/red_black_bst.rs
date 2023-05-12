@@ -1,8 +1,4 @@
-use std::{
-    cmp::Ordering,
-    fmt::{format, Debug, Display},
-    ops::Deref,
-};
+use std::{cmp::Ordering, fmt::Display, ops::Deref};
 
 use crate::stack::{Stack, StackLinkedList};
 
@@ -18,6 +14,11 @@ pub struct Node<K: KeyT, V> {
     is_red: bool,
 }
 
+/// A red black binary search tree.
+///
+/// A red black BST is an implementation of a 2-3 such that the underlying
+/// data structure is just a BST, with the insert and delete functions
+/// doing the heavy lifting to maintain balance.
 pub struct RedBlackBST<K: KeyT, V> {
     root: Link<K, V>,
     size: usize,
@@ -51,10 +52,7 @@ impl<K: KeyT, V> RedBlackBST<K, V> {
     ///
     /// Notice, we return r so that the link for the node pointing to n can be
     /// updated to r.
-    fn rotate_left(&mut self, mut n: Node<K, V>) -> Link<K, V> {
-        println!("rotate left");
-        // requires:
-        //      n.right = red
+    fn rotate_left(mut n: Node<K, V>) -> Link<K, V> {
         let mut r = n.right.take().unwrap();
 
         r.is_red = n.is_red;
@@ -103,16 +101,12 @@ impl<K: KeyT, V> RedBlackBST<K, V> {
     ///
     /// Finally, we return m so that the link for the node pointing to n can be
     /// update to r.
-    fn rotate_right(&mut self, mut n: Node<K, V>) -> Link<K, V> {
-        println!("rotate right");
-        // requires:
-        //      n.left = red
-        //      n.left.left = red
+    fn rotate_right(mut n: Node<K, V>) -> Link<K, V> {
         let mut m = n.left.take().unwrap();
         n.left = m.right.take();
         n.is_red = true;
         m.right = Some(Box::new(n));
-        self.flip_colors(*m)
+        Self::flip_colors(*m)
     }
 
     /// Given a node n, where both it's left and right link are red, we simply
@@ -130,11 +124,7 @@ impl<K: KeyT, V> RedBlackBST<K, V> {
     ///    l     r
     /// ```
     ///
-    fn flip_colors(&mut self, mut n: Node<K, V>) -> Link<K, V> {
-        println!("flip colors");
-        // requires:
-        //      n.left = red
-        //      n.right = red
+    fn flip_colors(mut n: Node<K, V>) -> Link<K, V> {
         n.left.as_mut().unwrap().is_red = false;
         n.right.as_mut().unwrap().is_red = false;
         n.is_red = true;
@@ -158,11 +148,11 @@ impl<K: KeyT, V> RedBlackBST<K, V> {
                 let some_and_red = |n: Option<&Box<Node<K, V>>>| n.map_or(false, |x| x.is_red);
 
                 if some_and_red(left) && some_and_red(right) {
-                    self.flip_colors(*node)
+                    Self::flip_colors(*node)
                 } else if some_and_red(left) && some_and_red(left_left) {
-                    self.rotate_right(*node)
+                    Self::rotate_right(*node)
                 } else if some_and_red(right) {
-                    self.rotate_left(*node)
+                    Self::rotate_left(*node)
                 } else {
                     Some(node)
                 }
@@ -174,15 +164,11 @@ impl<K: KeyT, V> RedBlackBST<K, V> {
         fn visit<'a, K: KeyT, V>(link: &'a Link<K, V>, key: K) -> Option<&'a Node<K, V>> {
             match link {
                 None => None,
-                Some(node) => {
-                    if key == node.key {
-                        Some(node.deref())
-                    } else if key > node.key {
-                        visit(&node.right, key)
-                    } else {
-                        visit(&node.left, key)
-                    }
-                }
+                Some(node) => match key.cmp(&node.key) {
+                    Ordering::Equal => Some(node.deref()),
+                    Ordering::Greater => visit(&node.right, key),
+                    Ordering::Less => visit(&node.left, key),
+                },
             }
         }
 
@@ -192,18 +178,19 @@ impl<K: KeyT, V> RedBlackBST<K, V> {
 
 impl<K: KeyT, V> SymbolTable<K, V> for RedBlackBST<K, V> {
     fn put(&mut self, key: K, val: V) -> Result<(), String> {
+        let node_to_insert = Node {
+            key: key,
+            val: val,
+            left: None,
+            right: None,
+            is_red: true,
+        };
+
         let mut root = self.root.take();
-        self.root = self.insert(
-            &mut root,
-            Node {
-                key: key,
-                val: val,
-                left: None,
-                right: None,
-                is_red: true,
-            },
-        );
-        self.root.as_mut().unwrap().is_red = false; // root is black by convention
+        self.root = self.insert(&mut root, node_to_insert);
+
+        // root is kept black since it is technically not part of a 3-node
+        self.root.as_mut().unwrap().is_red = false;
         self.size += 1;
         Ok(())
     }
