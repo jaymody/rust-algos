@@ -131,16 +131,26 @@ impl<K: KeyT, V> RedBlackBST<K, V> {
         Some(Box::new(n))
     }
 
-    fn insert(&mut self, link: &mut Link<K, V>, node_to_insert: Node<K, V>) -> Link<K, V> {
+    fn insert(link: &mut Link<K, V>, node_to_insert: Node<K, V>) -> Link<K, V> {
         match link.take() {
+            // we keep searching down the tree for a null link to place the
+            // new node (or until we find a match in which case we just update)
             None => Some(Box::new(node_to_insert)),
             Some(mut node) => {
+                // check if we need to go left, right, or we've hit a match
                 match node_to_insert.key.cmp(&node.key) {
                     Ordering::Equal => node.val = node_to_insert.val,
-                    Ordering::Less => node.left = self.insert(&mut node.left, node_to_insert),
-                    Ordering::Greater => node.right = self.insert(&mut node.right, node_to_insert),
+                    Ordering::Less => node.left = Self::insert(&mut node.left, node_to_insert),
+                    Ordering::Greater => node.right = Self::insert(&mut node.right, node_to_insert),
                 }
 
+                // If we've inserted a new node, our red black tree structure
+                // invariants may have been violated in 3 possible ways:
+                //
+                //   1) there is a left and a right red link (in which case we flip the colors)
+                //   2) there are two left red links in a row (in which case we rotate right and flip colors)
+                //   3) there is a right red link (in which case we rotate left)
+                //
                 let left = (&node).left.as_ref();
                 let right = (&node).right.as_ref();
                 let left_left = left.map_or(None, |n| n.left.as_ref());
@@ -160,19 +170,15 @@ impl<K: KeyT, V> RedBlackBST<K, V> {
         }
     }
 
-    fn search(&self, key: K) -> Option<&Node<K, V>> {
-        fn visit<'a, K: KeyT, V>(link: &'a Link<K, V>, key: K) -> Option<&'a Node<K, V>> {
-            match link {
-                None => None,
-                Some(node) => match key.cmp(&node.key) {
-                    Ordering::Equal => Some(node.deref()),
-                    Ordering::Greater => visit(&node.right, key),
-                    Ordering::Less => visit(&node.left, key),
-                },
-            }
+    fn search<'a>(link: &'a Link<K, V>, key: K) -> Option<&'a Node<K, V>> {
+        match link {
+            None => None,
+            Some(node) => match key.cmp(&node.key) {
+                Ordering::Equal => Some(node.deref()),
+                Ordering::Greater => Self::search(&node.right, key),
+                Ordering::Less => Self::search(&node.left, key),
+            },
         }
-
-        visit(&self.root, key)
     }
 }
 
@@ -183,20 +189,22 @@ impl<K: KeyT, V> SymbolTable<K, V> for RedBlackBST<K, V> {
             val: val,
             left: None,
             right: None,
-            is_red: true,
+            is_red: true, // new node must be a red link
         };
 
         let mut root = self.root.take();
-        self.root = self.insert(&mut root, node_to_insert);
+        self.root = Self::insert(&mut root, node_to_insert);
 
         // root is kept black since it is technically not part of a 3-node
         self.root.as_mut().unwrap().is_red = false;
+
         self.size += 1;
         Ok(())
     }
 
     fn get(&self, key: K) -> Option<&V> {
-        Some(&self.search(key)?.val)
+        let node = Self::search(&self.root, key)?;
+        Some(&node.val)
     }
 
     fn pop(&mut self, key: K) -> Option<V> {
