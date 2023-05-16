@@ -71,6 +71,33 @@ impl<T> LinkedList<T> {
         }
     }
 
+    pub fn insert(&mut self, index: usize, item: T) {
+        if index > self.len {
+            panic!("index out of bounds (idx = {}, len = {})", index, self.len);
+        }
+
+        if index == 0 {
+            self.push_front(item)
+        } else if index == self.len {
+            self.push_back(item)
+        } else {
+            self.len += 1;
+            let new_node = Node::new_link(item);
+            unsafe {
+                let mut node = self.head;
+                for _ in 0..index - 1 {
+                    node = (*node).next;
+                }
+
+                (*new_node).next = (*node).next;
+                (*new_node).prev = node;
+
+                (*(*node).next).prev = new_node;
+                (*node).next = new_node;
+            }
+        }
+    }
+
     pub fn pop_front(&mut self) -> Option<T> {
         unsafe {
             (!self.is_empty()).then(|| {
@@ -96,6 +123,34 @@ impl<T> LinkedList<T> {
                 self.len -= 1;
                 Box::from_raw(old_tail).item
             })
+        }
+    }
+
+    pub fn remove(&mut self, index: usize) -> T {
+        if index >= self.len {
+            panic!("index out of bounds (idx = {}, len = {})", index, self.len);
+        }
+
+        if index == 0 {
+            self.pop_front().unwrap()
+        } else if index == self.len - 1 {
+            self.pop_back().unwrap()
+        } else {
+            self.len -= 1;
+            let mut node = self.head;
+            unsafe {
+                for _ in 0..index {
+                    node = (*node).next;
+                }
+
+                let next = (*node).next;
+                let prev = (*node).prev;
+
+                (*prev).next = next;
+                (*next).prev = prev;
+
+                Box::from_raw(node).item
+            }
         }
     }
 
@@ -288,5 +343,84 @@ mod tests {
         for (i, x) in list.into_iter().enumerate() {
             assert_eq!(x, i + 11)
         }
+    }
+
+    #[test]
+    fn test_insert_remove() {
+        let mut list = LinkedList::new();
+        list.insert(0, -4);
+        list.insert(1, -5);
+        list.insert(0, -1);
+        list.insert(1, -2);
+        list.insert(2, -3);
+
+        let mut iter = (&list).into_iter();
+        assert_eq!(iter.next(), Some(&-1));
+        assert_eq!(iter.next(), Some(&-2));
+        assert_eq!(iter.next(), Some(&-3));
+        assert_eq!(iter.next(), Some(&-4));
+        assert_eq!(iter.next(), Some(&-5));
+        assert_eq!(iter.next(), None);
+
+        assert_eq!(list.remove(2), -3);
+        assert_eq!(list.remove(3), -5);
+        assert_eq!(list.remove(0), -1);
+        assert_eq!(list.remove(1), -4);
+
+        assert_eq!(list.peek_front(), Some(&-2));
+        assert_eq!(list.peek_back(), Some(&-2));
+    }
+
+    #[test]
+    #[should_panic(expected = "index out of bounds (idx = 1, len = 0)")]
+    fn test_insert_out_of_bounds_1() {
+        let mut list = LinkedList::new();
+        list.insert(1, -10);
+    }
+
+    #[test]
+    #[should_panic(expected = "index out of bounds (idx = 4, len = 3)")]
+    fn test_insert_out_of_bounds_2() {
+        let mut list = LinkedList::new();
+        list.insert(0, 1);
+        list.insert(0, 2);
+        list.insert(2, 3);
+
+        let mut iter = (&list).into_iter();
+        assert_eq!(iter.next(), Some(&2));
+        assert_eq!(iter.next(), Some(&1));
+        assert_eq!(iter.next(), Some(&3));
+        assert_eq!(iter.next(), None);
+
+        list.insert(4, 10);
+    }
+
+    #[test]
+    #[should_panic(expected = "index out of bounds (idx = 0, len = 0)")]
+    fn test_remove_out_of_bounds_1() {
+        let mut list: LinkedList<i32> = LinkedList::new();
+        list.remove(0);
+    }
+
+    #[test]
+    #[should_panic(expected = "index out of bounds (idx = 2, len = 2)")]
+    fn test_remove_out_of_bounds_2() {
+        let mut list = LinkedList::new();
+        list.push_back(1);
+        list.push_back(2);
+        list.push_back(3);
+        list.push_back(4);
+        list.push_back(5);
+
+        assert_eq!(list.remove(2), 3);
+        assert_eq!(list.remove(0), 1);
+        assert_eq!(list.remove(2), 5);
+
+        let mut iter = (&list).into_iter();
+        assert_eq!(iter.next(), Some(&2));
+        assert_eq!(iter.next(), Some(&4));
+        assert_eq!(iter.next(), None);
+
+        list.remove(2);
     }
 }
