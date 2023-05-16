@@ -211,6 +211,7 @@ impl<K: KeyT, V> SymbolTable<K, V> for RedBlackBST<K, V> {
         Some(&node.val)
     }
 
+    #[allow(unused_variables)]
     fn pop(&mut self, key: K) -> Option<V> {
         self.size -= 1;
         todo!()
