@@ -76,6 +76,9 @@ impl<T> LinkedList<T> {
             (!self.is_empty()).then(|| {
                 let old_head = self.head;
                 self.head = (*old_head).next;
+                if !self.head.is_null() {
+                    (*self.head).prev = null_mut();
+                }
                 self.len -= 1;
                 Box::from_raw(old_head).item
             })
@@ -87,6 +90,9 @@ impl<T> LinkedList<T> {
             (!self.is_empty()).then(|| {
                 let old_tail = self.tail;
                 self.tail = (*old_tail).prev;
+                if !self.tail.is_null() {
+                    (*self.tail).next = null_mut();
+                }
                 self.len -= 1;
                 Box::from_raw(old_tail).item
             })
