@@ -234,7 +234,7 @@ impl<K: KeyT + Display, V> Display for RedBlackBST<K, V> {
             if is_red {
                 s = format!("\x1b[01;31m{}\x1b[00m", s);
             }
-            format!("{}{}", prefix.clone(), s)
+            format!("{}{}", prefix, s)
         }
 
         fn visit<K: KeyT + Display, V>(

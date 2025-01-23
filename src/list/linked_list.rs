@@ -41,7 +41,7 @@ impl<T> LinkedList<T> {
 
     pub fn push_front(&mut self, item: T) {
         unsafe {
-            let mut new_head = Node::new_link(item);
+            let new_head = Node::new_link(item);
 
             if self.is_empty() {
                 self.tail = new_head;
